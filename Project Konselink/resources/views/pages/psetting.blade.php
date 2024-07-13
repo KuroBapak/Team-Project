@@ -14,6 +14,9 @@
             display: none;
         }
     }
+    .hidden {
+            display: none;
+        }
 </style>
 </head>
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
@@ -97,38 +100,113 @@
                 </div>
             </div>
             <!-- navbar END -->
-            <div class="container-fluid p-2">
-                <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/plus.png" style="">Tambah</button>
-                <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/printer.png" style="">Cetak</button>
-            <table class="table mt-2 text-center">
-                <thead class="table text-white text-center" style="background-color: #5265CC">
-                  <tr>
-                    <th>No</th>
-                    <th>Nama</th>
-                    <th>Kelas</th>
-                    <th>Tanggal</th>
-                    <th>Jam Mulai</th>
-                    <th>Jam Selesai</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody style="background-color: white">
-                  <tr>
-                    <th>1</th>
-                    <th>bagase</th>
-                    <th>XII RPL 1</th>
-                    <th>10-02-2024</th>
-                    <th>10:30</th>
-                    <th>11:30</th>
-                    <th class="">
-                        <button type="button" class="btn"><img src="assets/search-file.png" alt=""></button>
-                        <button type="button" class="btn"><img src="assets/edit-button.png" alt=""></i></button>
-                        <button type="button" class="btn"><img src="assets/trash.png" alt=""></button>
-                    </th>
-                  </tr>
-                </tbody>
-              </table>
+    <!-- Content -->
+    <div class="container-fluid">
+        <h1 class="bold mt-3 mb-3">Pengaturan Akun</h1>
+        <div style="background-color: white" class="container border border-black border-1 rounded-5 mb-5">
+            <div class="row">
+                <div class="col-lg-2">
+                    <div class="container-fluid text-center mt-4 mb-4">
+                        <button type="button" class="btn btn-outline-primary mb-2" onclick="showForm('umum')">Umum</button><br>
+                        <button type="button" class="btn btn-outline-primary mb-2" onclick="showForm('akun')">Akun</button><br>
+                        <button type="button" class="btn btn-outline-primary" onclick="showForm('kataSandi')">Kata Sandi</button>
+                    </div>
+                </div>
+                <div class="col-lg-10">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-12 text-center mb-3 mt-3">
+                                <img src="assets/pp.jpeg" class="img-fluid rounded-circle border border-dark border-2" style="width: 200px; height: 200px;" alt="...">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 text-end">
+                                <button type="button" class="btn btn-primary">Upload Foto</button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-danger">Hapus Foto</button>
+                            </div>
+                        </div>
+
+                        <!-- Umum Form -->
+                        <div id="umumForm" class="mt-4 mb-4">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="nama" class="form-label ps-2">Nama</label>
+                                        <input type="text" class="form-control border-0" id="nama" placeholder="Nama">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="nip1" class="form-label ps-2">NIP 1</label>
+                                        <input type="text" class="form-control border-0" id="nip1" placeholder="NIP 1">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="nip2" class="form-label ps-2">NIP 2</label>
+                                        <input type="text" class="form-control border-0" id="nip2" placeholder="NIP 2">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="jurusan" class="form-label ps-2">Jurusan</label>
+                                        <select class="form-select border-0" id="jurusan">
+                                            <option selected>Pilih Jurusan</option>
+                                            <option value="RPL">RPL</option>
+                                            <option value="TKJ">TKJ</option>
+                                            <option value="MM">MM</option>
+                                            <option value="BC">BC</option>
+                                            <option value="TEI">TEI</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Akun Form -->
+                        <div id="akunForm" class="mt-4 mb-4 hidden">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="username" class="form-label ps-2">Username</label>
+                                        <input type="text" class="form-control border-0" id="username" placeholder="Username">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Kata Sandi Form -->
+                        <div id="kataSandiForm" class="mt-4 mb-4 hidden">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="currentPassword" class="form-label ps-2">Password Saat Ini</label>
+                                        <input type="password" class="form-control border-0" id="currentPassword" placeholder="Password Saat Ini">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="newPassword" class="form-label ps-2">Password Baru</label>
+                                        <input type="password" class="form-control border-0" id="newPassword" placeholder="Password Baru">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3 border rounded-2">
+                                        <label for="confirmPassword" class="form-label ps-2">Konfirmasi Password</label>
+                                        <input type="password" class="form-control border-0" id="confirmPassword" placeholder="Konfirmasi Password">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary mb-5">Simpan</button>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
+    <!-- Content END -->
         </div>
     </div>
 </div>
@@ -157,5 +235,16 @@
 </div>
 
 <script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
+<script>
+    function showForm(formId) {
+        // Hide all forms
+        document.getElementById('umumForm').classList.add('hidden');
+        document.getElementById('akunForm').classList.add('hidden');
+        document.getElementById('kataSandiForm').classList.add('hidden');
+
+        // Show the selected form
+        document.getElementById(formId + 'Form').classList.remove('hidden');
+    }
+</script>
 </body>
 </html>
