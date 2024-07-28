@@ -14,6 +14,26 @@
                 display: none;
             }
         }
+
+        #drop-area {
+            border: 2px dashed #ccc;
+            border-radius: 20px;
+            width: 350px;
+            height: 200px;
+            padding: 20px;
+            font-family: sans-serif;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        #drop-area.highlight {
+            border-color: #132043;
+        }
+
+        #fileElem {
+            display: none;
+        }
+
     </style>
 </head>
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
@@ -75,7 +95,12 @@
                             <div class="col-6">
                                 <div class="mb-3 border rounded-2">
                                     <label for="exampleInputEmail1" class="form-label ps-2">Kelas</label>
-                                    <input type="email" class="form-control border-0" id="exampleInputEmail1" placeholder="Kelas Siswa" aria-describedby="emailHelp">
+                                    <select class="form-select border-0" aria-label="Default select example">
+                                        <option selected>Pilih Kelas</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                      </select>
                                   </div>
                             </div>
                         </div>
@@ -115,6 +140,23 @@
                             <label for="exampleFormControlTextarea1" class="form-label">Tindak lanjut</label>
                             <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Tindak Lanjut" rows="3"></textarea>
                           </div>
+
+                          <div class="container fluid">
+                            <p>Foto Kegiatan (png, jpg, jpeg)</p>
+                              <div id="drop-area">
+                                <p>Drag & Drop your files here</p>
+                                <img src="assets/image.png" class="img-fluid" alt="...">
+                                <input type="file" id="fileElem" multiple>
+                            </div>
+                            <p class="text-center">Atau</p>
+                          </div>
+
+                        <div class="container-fluid text-center">
+                            <button id="fileSelect" type="button" class="btn btn-light shadow p-3 mb-5 bg-body-tertiary rounded border">Pilih Gambar</button>
+                        </div>
+
+
+
                           <div class="text-end mb-3">
                               <button type="button" class="btn btn-outline-primary">Kembali</button>
                               <button type="button" class="btn btn-primary">Simpan</button>
@@ -150,7 +192,66 @@
         </div>
 </div>
 
+<script>
+    let dropArea = document.getElementById('drop-area');
+    let fileElem = document.getElementById('fileElem');
+    let fileSelect = document.getElementById('fileSelect');
 
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Highlight drop area when item is dragged over it
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false);
+    });
+
+    // Handle dropped files
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+
+        handleFiles(files);
+    }
+
+    function handleFiles(files) {
+        ([...files]).forEach(uploadFile);
+    }
+
+    function uploadFile(file) {
+        let url = 'urlnya';//up disini pi
+        let formData = new FormData();
+        formData.append('file', file);
+
+        fetch(url, {
+            method: 'POST',//pake method lu ae pi
+            body: formData
+        }).then(() => {
+            console.log('File uploaded successfully');
+        }).catch(() => {
+            console.log('File upload failed');
+        });
+    }
+
+    fileSelect.addEventListener('click', () => fileElem.click());
+
+    fileElem.addEventListener('change', (e) => {
+        let files = e.target.files;
+        handleFiles(files);
+    });
+</script>
 <script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
 </body>
 </html>

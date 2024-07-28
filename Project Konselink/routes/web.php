@@ -45,6 +45,14 @@ Route::get('/form1', function () {
     return view('pages.form1');
 });/*Form Konseling Individu*/
 
+Route::get('/editform1', function () {
+    return view('pages.editform1');
+});/*Form Edit Konseling Individu*/
+
+Route::get('/detailform1', function () {
+    return view('pages.detailform1');
+});/*Form Detail Konseling Individu*/
+
 Route::get('/form2', function () {
     return view('pages.form3');
 });/*Form Konseling kelompok*/
@@ -60,3 +68,42 @@ Route::get('/form4', function () {
 Route::get('/setting', function () {
     return view('pages.psetting');
 });/*Pengaturan Akun*/
+
+
+/*Akun adminnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn*/
+
+Route::get('/adashboard', function () {
+    return view('admin.dashboard');
+});/*dashboard admin*/
+
+Route::get('/menu5', function () {
+    return view('admin.menudata');
+});/*menu data guru bk*/
+
+Route::get('/form5', function () {
+    return view('admin.formdata');
+});/*form data guru bk*/
+
+Route::get('/edit1', function () {
+    return view('admin.editdata');
+});/*edit data guru bk*/
+
+Route::get('/menu6', function () {
+    return view('admin.menu');
+});/*menu admin*/
+
+Route::get('/menu7', function () {
+    return view('admin.menubkj');
+});/*menu BK jurusan*/
+
+Route::get('/form6', function () {
+    return view('admin.formbkj');
+});/*Form BK Jurusan*/
+
+Route::get('/edit2', function () {
+    return view('admin.editbkj');
+});/*Edit bk jurusan*/
+
+
+
+
