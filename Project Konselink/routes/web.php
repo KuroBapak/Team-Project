@@ -104,6 +104,28 @@ Route::get('/edit2', function () {
     return view('admin.editbkj');
 });/*Edit bk jurusan*/
 
+Route::get('/menu8', function () {
+    return view('admin.menudatas');
+});/*menu data siswa*/
 
+Route::get('/form7', function () {
+    return view('admin.formcreate');
+});/*Form Create Data Siswa Tahun Ajaran*/
+
+Route::get('/menu9', function () {
+    return view('admin.menudatast');
+});/*Menu Data Siswa Tahun Ajaran 1*/
+
+Route::get('/menu10', function () {
+    return view('admin.menudatast1');
+});/*Menu Data Siswa Tahun Ajaran 2*/
+
+Route::get('/menu11', function () {
+    return view('admin.menudatast2');
+});/*Menu Data Siswa Tahun Ajaran 3*/
+
+Route::get('/menu12', function () {
+    return view('admin.menudatast3');
+});/*Menu Data Siswa Tahun Ajaran 4*/
 
 
