@@ -106,21 +106,29 @@
             <div class="container-fluid p-2">
                 <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/larrow.png" style="">Kembali</button>
                 <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/plus.png" style="">Tambah</button>
+                <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/printer.png" style="">Cetak</button>
             <table class="table mt-2 text-center">
                 <thead class="table text-white text-center" style="background-color: #5265CC">
                   <tr>
                     <th>No</th>
-                    <th>Nama Jurusan</th>
-                    <th>Singkatan Jurusan</th>
+                    <th>Nama Siswa</th>
+                    <th>Kelas</th>
+                    <th>Tanggal</th>
+                    <th>Jam Mulai</th>
+                    <th>Jam Selesai</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody style="background-color: white">
                   <tr>
                     <th>1</th>
-                    <th>rpl</th>
-                    <th>rpl</th>
+                    <th>baso</th>
+                    <th>23</th>
+                    <th>44</th>
+                    <th>00</th>
+                    <th>11</th>
                     <th class="">
+                        <button type="button" class="btn"><img src="assets/search-file.png" alt=""></button>
                         <button type="button" class="btn"><img src="assets/edit-button.png" alt=""></i></button>
                         <button type="button" class="btn"><img src="assets/trash.png" alt=""></button>
                     </th>

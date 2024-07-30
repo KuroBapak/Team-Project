@@ -110,16 +110,20 @@
                 <thead class="table text-white text-center" style="background-color: #5265CC">
                   <tr>
                     <th>No</th>
-                    <th>Nama Jurusan</th>
-                    <th>Singkatan Jurusan</th>
+                    <th>Nama Kelas</th>
+                    <th>Jurusan</th>
+                    <th>Tingkat</th>
+                    <th>Tahun Ajaran</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody style="background-color: white">
                   <tr>
                     <th>1</th>
+                    <th>apakek</th>
                     <th>rpl</th>
-                    <th>rpl</th>
+                    <th>x</th>
+                    <th>2090</th>
                     <th class="">
                         <button type="button" class="btn"><img src="assets/edit-button.png" alt=""></i></button>
                         <button type="button" class="btn"><img src="assets/trash.png" alt=""></button>

@@ -110,15 +110,13 @@
                 <thead class="table text-white text-center" style="background-color: #5265CC">
                   <tr>
                     <th>No</th>
-                    <th>Nama Jurusan</th>
-                    <th>Singkatan Jurusan</th>
+                    <th>Tingkat</th>
                     <th>Action</th>
                   </tr>
                 </thead>
                 <tbody style="background-color: white">
                   <tr>
                     <th>1</th>
-                    <th>rpl</th>
                     <th>rpl</th>
                     <th class="">
                         <button type="button" class="btn"><img src="assets/edit-button.png" alt=""></i></button>

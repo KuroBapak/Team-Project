@@ -128,4 +128,68 @@ Route::get('/menu12', function () {
     return view('admin.menudatast3');
 });/*Menu Data Siswa Tahun Ajaran 4*/
 
+Route::get('/menu13', function () {
+    return view('admin.menudating');
+});/*Menu Data tingkat*/
+
+Route::get('/menu14', function () {
+    return view('admin.menudake');
+});/*Menu Data Kelas*/
+
+Route::get('/menu15', function () {
+    return view('admin.menukidiva');
+});/*Menu konseling individu admin*/
+
+Route::get('/form8', function () {
+    return view('admin.editdatasta');
+});/*Edit Data Siswa Tahun Ajaran*/
+
+Route::get('/form9', function () {
+    return view('admin.showdatasta');
+});/*show Data Siswa Tahun Ajaran*/
+
+Route::get('/form10', function () {
+    return view('admin.formdataj1');
+});/*show Data Siswa Tahun Ajaran*/
+
+Route::get('/form11', function () {
+    return view('admin.formdataj2');
+});/*show Data Siswa Tahun Ajaran*/
+
+Route::get('/form12', function () {
+    return view('admin.formdataj3');
+});/*Form Data Jurusan*/
+
+Route::get('/form13', function () {
+    return view('admin.formdataj4');
+});/*Form Data Jurusan*/
+
+Route::get('/form14', function () {
+    return view('admin.formdating1');
+});/*Form Data tingkat*/
+
+Route::get('/form15', function () {
+    return view('admin.formdating2');
+});/*Form Data tingkat*/
+
+Route::get('/form16', function () {
+    return view('admin.formdakel1');
+});/*Form Data Kelas*/
+
+Route::get('/form17', function () {
+    return view('admin.formdakel2');
+});/*Form Data Kelas*/
+
+Route::get('/form18', function () {
+    return view('admin.formksdu1');
+});/*Form Konseling Individu*/
+
+Route::get('/form19', function () {
+    return view('admin.formksdu2');
+});/*edit Konseling Individu*/
+
+Route::get('/form20', function () {
+    return view('admin.formksdu3');
+});/*detail Konseling Individu*/
+
 
