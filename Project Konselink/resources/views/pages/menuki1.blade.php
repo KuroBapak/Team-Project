@@ -14,6 +14,11 @@
             display: none;
         }
     }
+
+    .tbl-fixed {
+        overflow-x: scroll;
+        overflow-y: scroll;
+    }
 </style>
 </head>
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
@@ -100,6 +105,7 @@
             <div class="container-fluid p-2">
                 <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/plus.png" style="">Tambah</button>
                 <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/printer.png" style="">Cetak</button>
+                <div class="row tbl-fixed">
             <table class="table mt-2 text-center">
                 <thead class="table text-white text-center" style="background-color: #5265CC">
                   <tr>
@@ -115,7 +121,7 @@
                 <tbody style="background-color: white">
                   <tr>
                     <th>1</th>
-                    <th>bagase</th>
+                    <th>bagass</th>
                     <th>betan</th>
                     <th>rafi</th>
                     <th>XII RPL 1</th>
@@ -128,6 +134,7 @@
                   </tr>
                 </tbody>
               </table>
+            </div>
             </div>
         </div>
     </div>

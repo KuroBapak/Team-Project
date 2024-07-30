@@ -23,23 +23,6 @@
             }
         }
 
-        .hrdivider {
-        position: relative;
-        margin-bottom: 50px;
-        width: 100%;
-        margin-top: 50px;
-
-        }
-
-        .hrdivider span {
-        position: absolute;
-        top: -11px;
-        background: #fff;
-        padding: 0 10px;
-        font-weight: bold;
-        font-size: 14px;
-
-        }
     </style>
 </head>
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
@@ -86,11 +69,6 @@
                   <div class="d-flex justify-content-center">
                       <button type="button" style="background-color: #1E2772;" class="btn w-100 mt-3 text-white">Masuk</button>
                   </div>
-                  <div class="hrdivider text-secondary">
-                    <hr/>
-                    <span style="margin-left: 200px;">ATAU</span>
-                  </div>
-                  <button type="button" class="btn btn-outline-primary w-100">Daftar</button>
                 </form>
             </div>
             </div>

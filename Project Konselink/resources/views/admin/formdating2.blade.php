@@ -78,8 +78,8 @@
                             </div>
                         </div>
                           <div class="text-end mb-3">
-                              <button type="button" class="btn btn-outline-primary">Kembali</button>
-                              <button type="button" class="btn btn-danger">Ubah</button>
+                              <button type="button" class="btn btn-outline-primary mb-5">Kembali</button>
+                              <button type="button" class="btn btn-danger mb-5">Ubah</button>
                           </div>
                     </div>
                 </div>

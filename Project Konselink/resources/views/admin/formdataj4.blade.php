@@ -75,8 +75,8 @@
                             </div>
                         </div>
                           <div class="text-end mb-3">
-                              <button type="button" class="btn btn-outline-primary">Kembali</button>
-                              <button type="button" class="btn btn-danger">Ubah</button>
+                              <button type="button" class="btn btn-outline-primary mb-3">Kembali</button>
+                              <button type="button" class="btn btn-danger mb-3">Ubah</button>
                           </div>
                     </div>
                 </div>

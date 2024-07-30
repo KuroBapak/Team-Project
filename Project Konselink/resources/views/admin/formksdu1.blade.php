@@ -132,6 +132,14 @@
                                   </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3 border rounded-2">
+                                    <label for="exampleInputEmail1" class="form-label ps-2">Nama Guru</label>
+                                    <input type="email" class="form-control border-0" id="exampleInputEmail1" placeholder="Nama Guru BK" aria-describedby="emailHelp">
+                                  </div>
+                            </div>
+                        </div>
                         <div class="mb-3">
                             <label for="exampleFormControlTextarea1" class="form-label">Deskripsi</label>
                             <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Deskripsi Permasalahan" rows="3"></textarea>

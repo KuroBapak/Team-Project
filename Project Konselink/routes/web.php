@@ -110,7 +110,7 @@ Route::get('/menu8', function () {
 
 Route::get('/form7', function () {
     return view('admin.formcreate');
-});/*Form Create Data Siswa Tahun Ajaran*/
+});/*Form Create Data Siswa Tahun Ajaran*//////////////////////////////////anomaly//
 
 Route::get('/menu9', function () {
     return view('admin.menudatast');

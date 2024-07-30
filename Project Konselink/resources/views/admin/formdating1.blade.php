@@ -78,8 +78,8 @@
                             </div>
                         </div>
                           <div class="text-end mb-3">
-                              <button type="button" class="btn btn-outline-primary">Kembali</button>
-                              <button type="button" class="btn btn-outline-primary">Simpan</button>
+                              <button type="button" class="btn btn-outline-primary mb-5">Kembali</button>
+                              <button type="button" class="btn btn-outline-primary mb-5">Simpan</button>
                           </div>
                     </div>
                 </div>

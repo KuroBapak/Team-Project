@@ -166,9 +166,6 @@
                 </div>
                 <div class="col-3">
                 </div>
-
-
-
                 </div>
         <!-- Content end -->
         <div class="container-fluid p-5 text-white" style="background-color: #132043;">

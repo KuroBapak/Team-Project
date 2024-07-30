@@ -14,6 +14,11 @@
             display: none;
         }
     }
+
+    .tbl-fixed {
+        overflow-x: scroll;
+        overflow-y: scroll;
+    }
 </style>
 </head>
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
@@ -106,7 +111,8 @@
             <div class="container-fluid p-2">
                 <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/larrow.png" style="">Kembali</button>
                 <button type="button" style="background-color: white;" class="btn background-none btn-lg"><img class="img-fluid pe-2" src="assets/plus.png" style="">Tambah</button>
-            <table class="table mt-2 text-center">
+                <div class="row tbl-fixed mb-5">
+                <table class="table mt-2 text-center">
                 <thead class="table text-white text-center" style="background-color: #5265CC">
                   <tr>
                     <th>No</th>
@@ -117,7 +123,7 @@
                 <tbody style="background-color: white">
                   <tr>
                     <th>1</th>
-                    <th>rpl</th>
+                    <th>rplllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll</th>
                     <th class="">
                         <button type="button" class="btn"><img src="assets/edit-button.png" alt=""></i></button>
                         <button type="button" class="btn"><img src="assets/trash.png" alt=""></button>
@@ -125,6 +131,7 @@
                   </tr>
                 </tbody>
               </table>
+                </div>
             </div>
         </div>
     </div>
