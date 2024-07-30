@@ -41,9 +41,10 @@
                               <img class="img-fluid" src="assets/konselor.png" style="height: 20px; width: 25px;">
                               <img class="img-fluid" src="assets/NESKAR.png" style="height: 20px; width: 25px;">
                               </li>
-                              <li><a class="dropdown-item" href="#">Beranda</a></li>
-                              <li><a class="dropdown-item" href="#">Data Permintaan</a></li>
+                              <li><a class="dropdown-item" href="#">Dashboard</a></li>
                               <li><a class="dropdown-item" href="#">Account</a></li>
+                              <li><a class="dropdown-item" href="#">Admin</a></li>
+                              <li><a class="dropdown-item" href="#">Data Guru BK</a></li>
                               <li><hr class="dropdown-divider"></li>
                               <li><a class="dropdown-item" href="#">LOGOUT</a></li>
                             </ul>

@@ -29,7 +29,7 @@
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
 <div class="container-fluid">
     <div class="row">
-        <div id="hide" class="col-2" style="background-color: #323A7F; height: 170vh;">
+        <div id="hide" class="col-2" style="background-color: #323A7F; min-height: 100vh;">
             <div class="row ps-3">
                 <img src="assets/gbulet.png" style="height: 20px; width: 100px;" class="img-fluid mt-3 mb-3">
             </div>
@@ -99,9 +99,10 @@
                                   <img class="img-fluid" src="assets/konselor.png" style="height: 20px; width: 25px;">
                                   <img class="img-fluid" src="assets/NESKAR.png" style="height: 20px; width: 25px;">
                                   </li>
-                                  <li><a class="dropdown-item" href="#">Beranda</a></li>
-                                  <li><a class="dropdown-item" href="#">Data Permintaan</a></li>
+                                  <li><a class="dropdown-item" href="#">Dashboard</a></li>
                                   <li><a class="dropdown-item" href="#">Account</a></li>
+                                  <li><a class="dropdown-item" href="#">Admin</a></li>
+                                  <li><a class="dropdown-item" href="#">Data Guru BK</a></li>
                                   <li><hr class="dropdown-divider"></li>
                                   <li><a class="dropdown-item" href="#">LOGOUT</a></li>
                                 </ul>

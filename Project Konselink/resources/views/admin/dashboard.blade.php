@@ -29,7 +29,7 @@
 <body style="background-color: #F4F4F4; font-family: 'Poppins';">
 <div class="container-fluid">
     <div class="row">
-        <div id="hide" class="col-2" style="background-color: #323A7F; height: 170vh;">
+        <div id="hide" class="col-2" style="background-color: #323A7F; min-height: 100vh;">
             <div class="row ps-3">
                 <img src="assets/gbulet.png" style="height: 20px; width: 100px;" class="img-fluid mt-3 mb-3">
             </div>
@@ -99,9 +99,10 @@
                                   <img class="img-fluid" src="assets/konselor.png" style="height: 20px; width: 25px;">
                                   <img class="img-fluid" src="assets/NESKAR.png" style="height: 20px; width: 25px;">
                                   </li>
-                                  <li><a class="dropdown-item" href="#">Beranda</a></li>
-                                  <li><a class="dropdown-item" href="#">Data Permintaan</a></li>
+                                  <li><a class="dropdown-item" href="#">Dashboard</a></li>
                                   <li><a class="dropdown-item" href="#">Account</a></li>
+                                  <li><a class="dropdown-item" href="#">Admin</a></li>
+                                  <li><a class="dropdown-item" href="#">Data Guru BK</a></li>
                                   <li><hr class="dropdown-divider"></li>
                                   <li><a class="dropdown-item" href="#">LOGOUT</a></li>
                                 </ul>
@@ -293,29 +294,29 @@
         </div>
     </div>
 </div>
-<div class="container-fluid p-5 text-white" style="background-color: #132043">
-    <div class="container-fluid " style="">
+<!-- Footer Start -->
+<div class="container-fluid px-5 pt-5 pb-3 text-white" style="background-color: #132043">
+    <div class="container-fluid">
         <div class="row">
-            <div class="col-1">
-            </div>
+            <div class="col-1"></div>
             <div class="col-6">
-                <div class="row" style="font-size: 20px">
-                <img src="assets/neskar.png" class="img-fluid text-end" style="height: 108px; width: 130px;" alt="...">
-                SMK Negeri 1<br>Karawang
-            </div>
+                <div class="row d-flex align-items-center mb-2" style="font-size: 20px">
+                    <img src="assets/neskar.png" class="img-fluid text-end" style="height: 108px; width: 130px;" alt="...">
+                    SMK Negeri 1<br>Karawang
+                </div>
                 <p>Jl. Pangkal Perjuangan, Karawang Barat,<br> Karawang, Jawa Barat, Indonesia - 41361</p>
                 <p>smknegeri1karawang@gmail.com</p>
             </div>
             <div class="col-4 text-end">
                 <img src="assets/ttc.png" class="img-fluid text-end" alt="...">
             </div>
-            <div class="col-1">
-            </div>
+            <div class="col-1"></div>
         </div>
-<hr class="rounded-1" style="border: 1px solid white;">
-<p class="text-center">@ Copyright TechTastic 2024</p>
+        <hr class="rounded-1" style="border: 1px solid white;">
+        <p class="text-center">&copy; Copyright TechTastic 2024</p>
     </div>
 </div>
+<!-- Footer End -->
 
 <script src="{{ asset('js/bootstrap.bundle.js') }}"></script>
 </body>
