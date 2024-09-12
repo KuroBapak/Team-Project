@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Order;
+use App\Models\Product;
 use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
@@ -36,13 +37,19 @@ class OrderController extends Controller
             }),
         ]);
 
-        // Simpan detail pesanan
         foreach ($cartItems as $item) {
-            $order->items()->create([
+            $orderItem = $order->items()->create([
                 'product_id' => $item['id'],
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
             ]);
+
+            // Kurangi stok produk
+            $product = Product::find($item['id']);
+            if ($product) {
+                $product->stock -= $item['quantity'];
+                $product->save();
+            }
         }
 
         // Kosongkan cart

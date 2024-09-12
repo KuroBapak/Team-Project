@@ -58,12 +58,18 @@ class CartController extends Controller
     public function checkout()
     {
         // Ambil data cart dari session
-        $cartItems = Session::get('cart', []);
+        $cartItems = session()->get('cart', []);
         $subtotal = collect($cartItems)->sum(function ($item) {
             return $item['price'] * $item['quantity'];
         });
 
-        // Kirim data cart dan subtotal ke view checkout
+        // Ambil informasi stok produk
+        foreach ($cartItems as &$item) {
+            $product = Product::find($item['id']);
+            $item['stock'] = $product ? $product->stock : 0;
+        }
+
+        // Kirim data cart, subtotal, dan stok ke view checkout
         return view('checkout', compact('cartItems', 'subtotal'));
     }
 
@@ -71,12 +77,12 @@ class CartController extends Controller
     public function removeCart($id)
     {
         // Ambil cart dari session
-        $cart = Session::get('cart', []);
+        $cart = session()->get('cart', []);
 
         // Cek jika produk ada di cart
         if (isset($cart[$id])) {
             unset($cart[$id]); // Hapus produk dari cart
-            Session::put('cart', $cart); // Simpan kembali cart ke session
+            session()->put('cart', $cart); // Simpan kembali cart ke session
         }
 
         return redirect()->back()->with('success', 'Product removed from cart successfully!');

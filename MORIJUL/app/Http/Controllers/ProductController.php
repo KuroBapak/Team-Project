@@ -4,28 +4,89 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    public function index() {
+    // Menampilkan halaman dashboard admin dengan daftar produk
+    public function index()
+    {
         $products = Product::all();
-        return view('products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
-    public function store(Request $request) {
-        $product = new Product();
-        $product->name = $request->name;
-        $product->price = $request->price;
-        $product->size = $request->size;
-        $product->image = $request->file('image')->store('images');
-        $product->save();
+    // Menyimpan produk baru
+    public function store(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'size' => 'required|string|in:kecil,sedang,besar',
+            'stock' => 'required|integer|min:0',
+            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
 
-        return redirect()->route('admin.dashboard');
+        // Upload gambar
+        $imagePath = $request->file('image')->store('images', 'public');
+
+        // Simpan produk baru
+        Product::create([
+            'name' => $request->name,
+            'price' => $request->price,
+            'size' => $request->size,
+            'stock' => $request->stock,
+            'image' => $imagePath,
+        ]);
+
+        return redirect()->route('admin.products')->with('status', 'Product added successfully!');
     }
 
-    public function destroy($id) {
-        Product::destroy($id);
-        return redirect()->route('admin.dashboard');
+    // Menampilkan form edit produk
+    public function edit($id)
+    {
+        $product = Product::findOrFail($id);
+        return view('admin.edit', compact('product'));
     }
 
+    // Memperbarui produk
+    public function update(Request $request, $id)
+    {
+        // Validasi input
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'size' => 'required|string|in:kecil,sedang,besar',
+            'stock' => 'required|integer|min:0',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ]);
+
+        $product = Product::findOrFail($id);
+
+        // Jika ada gambar yang diunggah, hapus gambar lama dan simpan yang baru
+        if ($request->hasFile('image')) {
+            Storage::delete('public/' . $product->image);
+            $imagePath = $request->file('image')->store('images', 'public');
+            $product->image = $imagePath;
+        }
+
+        // Perbarui data produk
+        $product->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'size' => $request->size,
+            'stock' => $request->stock,
+        ]);
+
+        return redirect()->route('admin.products')->with('status', 'Product updated successfully!');
+    }
+
+    // Menghapus produk
+    public function destroy($id)
+    {
+        $product = Product::findOrFail($id);
+        Storage::delete('public/' . $product->image);
+        $product->delete();
+        return redirect()->route('admin.products')->with('status', 'Product deleted successfully!');
+    }
 }

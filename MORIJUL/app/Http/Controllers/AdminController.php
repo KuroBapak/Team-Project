@@ -17,7 +17,7 @@ class AdminController extends Controller
     public function dashboard()
     {
         $products = Product::all();
-        return view('admin.products.index', compact('products')); // Tampilan form login
+        return view('admin.products.dashboard', compact('products'));
     }
 
     public function login(Request $request)

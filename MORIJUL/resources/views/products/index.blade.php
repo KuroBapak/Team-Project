@@ -12,6 +12,7 @@
                 <th>Image</th>
                 <th>Price</th>
                 <th>Size</th>
+                <th>Stock</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -22,6 +23,7 @@
                 <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
                 <td>{{ $product->price }}</td>
                 <td>{{ $product->size }}</td>
+                <td>{{ $product->stock }}</td> <!-- Menampilkan stok -->
                 <td>
                     <form action="{{ route('cart.add', $product->id) }}" method="POST">
                         @csrf

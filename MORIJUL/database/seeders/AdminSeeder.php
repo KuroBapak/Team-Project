@@ -15,7 +15,7 @@ public function run()
     // Buat user admin dengan password yang di-hash
     Admin::create([
         'username' => 'admin',
-        'password' => Hash::make('password123'), // Enkripsi password
+        'password' => Hash::make('admin'), // Enkripsi password
     ]);
 }
 }
