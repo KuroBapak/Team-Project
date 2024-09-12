@@ -17,7 +17,7 @@ Route::get('/', function () {
     return view('home'); // Home page
 })->name('home');
 
-Route::get('/products', [ProductController::class, 'index'])->name('products');
+Route::get('/products', [ProductController::class, 'guest'])->name('products');
 // Route untuk menampilkan isi keranjang
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 

@@ -15,6 +15,12 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
+    public function guest()
+    {
+        $products = Product::all();
+        return view('products.index', compact('products'));
+    }
+
     // Menyimpan produk baru
     public function store(Request $request)
     {
