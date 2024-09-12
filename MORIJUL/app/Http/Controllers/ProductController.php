@@ -20,12 +20,12 @@ class ProductController extends Controller
         $product->image = $request->file('image')->store('images');
         $product->save();
 
-        return redirect()->route('admin.products');
+        return redirect()->route('admin.dashboard');
     }
 
     public function destroy($id) {
         Product::destroy($id);
-        return redirect()->route('admin.products');
+        return redirect()->route('admin.dashboard');
     }
 
 }

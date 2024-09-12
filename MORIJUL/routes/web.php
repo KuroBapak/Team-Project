@@ -38,6 +38,7 @@ Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminController::class, 'login']);
 Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 
+
 // Route untuk halaman dashboard admin (dilindungi oleh middleware admin)
 Route::middleware('admin')->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

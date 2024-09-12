@@ -5,6 +5,15 @@
 </head>
 <body>
     <h1>Manage Products</h1>
+    @if(session('status'))
+    <div>{{ session('status') }}</div>
+@endif
+
+    <form action="{{ route('logout') }}" method="POST">
+        @csrf
+        <button type="submit">Logout</button>
+    </form>
+
 
     <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -42,11 +51,12 @@
             @foreach ($products as $product)
             <tr>
                 <td>{{ $product->name }}</td>
+                <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
                 <td>{{ $product->price }}</td>
                 <td>{{ $product->size }}</td>
-                <td><img src="{{ asset('storage/' . $product->image) }}" width="100"></td>
                 <td>
-                    <form action="{{ route('admin.products.delete', $product->id) }}" method="POST">
+                    <!-- Form untuk delete produk -->
+                    <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this product?');">
                         @csrf
                         @method('DELETE')
                         <button type="submit">Delete</button>

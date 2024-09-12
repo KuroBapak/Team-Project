@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin; // Pastikan model Admin sudah ada
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -11,6 +12,12 @@ class AdminController extends Controller
     public function showLoginForm()
     {
         return view('admin.login'); // Tampilan form login
+    }
+
+    public function dashboard()
+    {
+        $products = Product::all();
+        return view('admin.products.index', compact('products')); // Tampilan form login
     }
 
     public function login(Request $request)
@@ -38,9 +45,10 @@ class AdminController extends Controller
 }
 
 
-    public function logout()
-    {
-        session()->forget('admin'); // Hapus session admin
-        return redirect()->route('login'); // Arahkan ke halaman login
-    }
+public function logout()
+{
+    session()->forget('admin'); // Hapus session admin
+    return redirect()->route('login'); // Arahkan ke halaman login
+}
+
 }
