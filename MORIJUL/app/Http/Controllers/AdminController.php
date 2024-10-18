@@ -15,6 +15,24 @@ class AdminController extends Controller
         return view('admin.login'); // Tampilan form login
     }
 
+    public function updatePaymentStatus($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->payment_status = 'done'; // Update status to 'done'
+        $order->save();
+
+        return redirect()->route('admin.dashboard')->with('status', 'Payment status updated!');
+    }
+
+    // Method to delete an order
+    public function deleteOrder($id)
+    {
+        $order = Order::findOrFail($id);
+        $order->delete();
+
+        return redirect()->route('admin.dashboard')->with('status', 'Order deleted successfully!');
+    }
+
     public function dashboard()
     {
         $products = Product::all();
