@@ -50,6 +50,7 @@
         </table>
 
         <button type="submit">Place Order</button>
+        <a href="{{ route('cart.index') }}">View Cart</a>
     </form>
 </body>
 </html>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin; // Pastikan model Admin sudah ada
+use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -17,7 +18,9 @@ class AdminController extends Controller
     public function dashboard()
     {
         $products = Product::all();
-        return view('admin.products.dashboard', compact('products'));
+        $orders = Order::with('items')->get(); // Fetch orders with order items
+
+        return view('admin.products.dashboard', compact('products', 'orders'));
     }
 
     public function login(Request $request)
