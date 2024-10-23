@@ -12,12 +12,7 @@ use App\Http\Controllers\OrderController;
 |--------------------------------------------------------------------------
 */
 
-// 1. Home Page
-Route::get('/', function () {
-    return view('home'); // Home page
-})->name('home');
-
-Route::get('/products', [ProductController::class, 'guest'])->name('products');
+Route::get('/', [ProductController::class, 'guest'])->name('products');
 // Route untuk menampilkan isi keranjang
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 

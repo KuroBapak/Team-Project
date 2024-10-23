@@ -56,7 +56,7 @@ class OrderController extends Controller
         session()->forget('cart');
 
         // Redirect dengan pesan sukses
-        return redirect()->route('home')->with('success', 'Order placed successfully!');
+        return redirect()->route('products')->with('success', 'Order placed successfully!');
     }
 
 }
