@@ -18,21 +18,21 @@
         }
 
         .navbar-toggler {
-            border: none; 
+            border: none;
             outline: none;
         }
 
         .custom-toggler-icon {
             width: 30px;
             height: 3px;
-            background-color: #ffffff; 
+            background-color: #ffffff;
             display: block;
             margin: 5px 0;
             transition: 0.3s ease-in-out;
         }
 
         .navbar-toggler:hover .custom-toggler-icon {
-            background-color: #ff9800; 
+            background-color: #ff9800;
         }
 
         .navbar-collapse {
@@ -81,7 +81,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-black ">
         <div class="container-fluid">
             <a class="navbar-brand mx-auto position-absolute start-50 translate-middle-x" href="#">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQBSDfQSDbKDjU52wMhLUVyR839TVlgR61XxDh3LIdAdYrjtYFsybWu167sDtGDj8TDyUzWLp23vBV4lmM-bP9wXVs2JiOi9E_efIwsuNJSa4Slrmf3cWt-yBfUDJkFd0XDuQjIpZe561Cz_Wofm6M0XpdXbcwhuRgaq6CwerhIAWdnSG6QIe5ZWonSo8M/s320/image_2024-09-09_130643787-removebg-preview%20(2).png" 
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQBSDfQSDbKDjU52wMhLUVyR839TVlgR61XxDh3LIdAdYrjtYFsybWu167sDtGDj8TDyUzWLp23vBV4lmM-bP9wXVs2JiOi9E_efIwsuNJSa4Slrmf3cWt-yBfUDJkFd0XDuQjIpZe561Cz_Wofm6M0XpdXbcwhuRgaq6CwerhIAWdnSG6QIe5ZWonSo8M/s320/image_2024-09-09_130643787-removebg-preview%20(2).png"
                 alt="logoweb" style="height: 150px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -152,7 +152,7 @@
         </form>
 
         <h2 class="mt-5">Product List</h2>
-        <div class="table-responsive"> 
+        <div class="table-responsive">
             <table class="table table-striped table-hover table-bordered">
                 <thead class="table-dark">
                     <tr>
@@ -187,7 +187,7 @@
         </div>
     </div>
 
- 
+
     <footer class="text-center text-white mt-5 bg-black">
         <div class="container bg-black">
             <p>&copy; 2024 Morijul. All rights reserved.</p>
