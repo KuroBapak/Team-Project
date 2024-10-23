@@ -26,14 +26,7 @@ Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('cart.
 
 // Route untuk menghapus item dari keranjang
 Route::post('/cart/remove/{id}', [CartController::class, 'removeCart'])->name('cart.remove');
-
-
-
 Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
-
-
-
-
 Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminController::class, 'login']);
 Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
