@@ -101,8 +101,8 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-black ">
         <div class="container-fluid">
-            <a class="navbar-brand mx-auto position-absolute start-50 translate-middle-x" href="#">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhQBSDfQSDbKDjU52wMhLUVyR839TVlgR61XxDh3LIdAdYrjtYFsybWu167sDtGDj8TDyUzWLp23vBV4lmM-bP9wXVs2JiOi9E_efIwsuNJSa4Slrmf3cWt-yBfUDJkFd0XDuQjIpZe561Cz_Wofm6M0XpdXbcwhuRgaq6CwerhIAWdnSG6QIe5ZWonSo8M/s320/image_2024-09-09_130643787-removebg-preview%20(2).png"
+            <a class="navbar-brand mx-auto position-absolute start-50 translate-middle-x" href="{{ route('admin.dashboard') }}">
+                <img src="{{ url('asset/logo.png') }}"
                 alt="logoweb" style="height: 150px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -125,51 +125,63 @@
         </div>
     </nav>
 
-        <div class="container mt-5 text-white" style="background-color: #201F1F;">
-        <h1>Your Cart</h1>
-        <table>
-            <thead>
+<!-- Your Cart View -->
+<div class="container mt-5 text-white" style="background-color: #201F1F;">
+    <h1>Your Cart</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (!empty($cartItems))
+                @foreach ($cartItems as $item)
                 <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Action</th>
+                    <td>{{ $item['name'] }}</td>
+                    <td>
+                        {{ $item['quantity'] }}
+                    </td>
+                    <td>{{ $item['price'] }} IDR</td>
+                    <td>
+                        <form action="{{ route('cart.remove', $item['id']) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-danger">Remove</button>
+                        </form>
+                        <form action="{{ route('cart.update', ['id' => $item['id'], 'action' => 'increase']) }}" method="POST" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-warning btn-sm">+</button>
+                        </form>
+                        <form action="{{ route('cart.update', ['id' => $item['id'], 'action' => 'decrease']) }}" method="POST" style="display:inline;">
+                            @csrf
+                            <button type="submit" class="btn btn-warning btn-sm">-</button>
+                        </form>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @if (!empty($cartItems))
-                    @foreach ($cartItems as $item)
-                    <tr>
-                        <td>{{ $item['name'] }}</td>
-                        <td>{{ $item['quantity'] }}</td>
-                        <td>{{ $item['price'] }}</td>
-                        <td>
-                            <form action="{{ route('cart.remove', $item['id']) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-danger">Remove</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                @else
-                    <tr>
-                        <td colspan="4">Your cart is empty.</td>
-                    </tr>
-                @endif
-            </tbody>
-        </table>
+                @endforeach
+            @else
+                <tr>
+                    <td colspan="4">Your cart is empty.</td>
+                </tr>
+            @endif
+        </tbody>
+    </table>
 
-        <!-- Right-aligned continue shopping link -->
-        <div class="continue mt-3">
-            <button class="btn btn-primary">
-            <a href="{{ route('products') }}">Continue Shopping</a>
-            </button>
-        </div>
+    <form action="{{ route('checkout') }}" method="GET">
+        <button type="submit" class="btn btn-primary mt-3">Proceed to Checkout</button>
+    </form>
+    <div class="continue mt-2">
+        <button class="btn btn-primary">
+        <a href="{{ route('products') }}">Continue Shopping</a>
+        </button>
+    </div>
+</div>
 
-        <form action="{{ route('checkout') }}" method="GET" style="margin-top: 10px;">
-            <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
-        </form>
-        </div>
+
+
 
     <footer class="text-center text-white mt-5 bg-black">
         <div class="container bg-black">

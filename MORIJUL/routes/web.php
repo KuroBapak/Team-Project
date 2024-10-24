@@ -25,6 +25,10 @@ Route::post('/order/store', [OrderController::class, 'store'])->name('order.stor
 Route::get('/login', [AdminController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AdminController::class, 'login']);
 Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+// Route for updating cart quantity
+Route::post('/cart/update/{id}/{action}', [CartController::class, 'updateCartQuantity'])->name('cart.update');
+
+
 
 
 // Route untuk halaman dashboard admin (dilindungi oleh middleware admin)

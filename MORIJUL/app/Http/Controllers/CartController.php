@@ -73,6 +73,29 @@ class CartController extends Controller
         return view('checkout', compact('cartItems', 'subtotal'));
     }
 
+    public function updateCartQuantity(Request $request, $id, $action)
+    {
+        // Get cart from session
+        $cart = Session::get('cart', []);
+
+        // Check if the product exists in the cart
+        if (isset($cart[$id])) {
+            // Increase or decrease quantity based on action
+            if ($action === 'increase') {
+                $cart[$id]['quantity']++;
+            } elseif ($action === 'decrease' && $cart[$id]['quantity'] > 1) {
+                $cart[$id]['quantity']--;
+            }
+
+            // Update session cart
+            Session::put('cart', $cart);
+        }
+
+        return redirect()->back()->with('success', 'Cart quantity updated successfully!');
+    }
+
+
+
     // Hapus produk dari cart
     public function removeCart($id)
     {
