@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
-            background-color: #424344;
+            background-color: #433F3F;
         }
 
         nav {
@@ -90,13 +90,13 @@
             <div class="collapse navbar-collapse" id="mainNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ route('cart.index') }}">
                             <i class="fas fa-shopping-cart" style="font-size: 1.5em;"></i>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <i class="fas fa-info-circle" style="font-size: 1.5em;"></i>
+                        <a class="nav-link" href="{{ route('products') }}">
+                            <i class="fas fa-home" style="font-size: 1.5em;"></i>
                         </a>
                     </li>
                 </ul>
@@ -104,7 +104,7 @@
         </div>
     </nav>
 
-    <div class="container mt-5 bg-dark text-white">
+    <div class="container mt-5 text-white" style="background-color: #201F1F;">
         <h1 class="text-center">Manage Products</h1>
 
         <div class="d-flex justify-content-between align-items-center my-3">
