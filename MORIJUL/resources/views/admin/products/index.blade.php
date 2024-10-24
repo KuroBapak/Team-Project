@@ -105,7 +105,7 @@
     </nav>
 
     <div class="container mt-5 text-white" style="background-color: #201F1F;">
-        <h1 class="text-center">Manage Products</h1>
+        <h1 class="text-left mb-5 mt-2">Manage Products</h1>
 
         <div class="d-flex justify-content-between align-items-center my-3">
             <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Manage Dashboard</a>

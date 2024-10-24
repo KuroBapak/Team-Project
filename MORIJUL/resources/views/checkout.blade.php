@@ -104,26 +104,26 @@
     </nav>
 
     <!-- Main -->
-    <div class="container mt-5">
+    <div class="container mt-5 text-white" style="background-color: #201F1F;">
         <h1>Checkout</h1>
         <form action="{{ route('order.store') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="buyer_name">Buyer Name:</label>
+                <label for="buyer_name" class="mb-2">Buyer Name:</label>
                 <input type="text" name="buyer_name" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="room_number">Room Number:</label>
+                <label for="room_number" class="mb-2">Room Number:</label>
                 <input type="text" name="room_number" class="form-control" required>
             </div>
             <div class="form-group">
-                <label for="payment_type">Payment Type:</label>
+                <label for="payment_type" class="mb-2">Payment Type:</label>
                 <select name="payment_type" class="form-control" required>
                     <option value="COD">Cash on Delivery</option>
                     <option value="QRIS">QRIS</option>
                 </select>
             </div>
-            <h2>Order Summary</h2>
+            <h2 class="mt-5">Order Summary</h2>
             <div class="table-responsive">
                 <table class="table table-dark">
                     <thead>
