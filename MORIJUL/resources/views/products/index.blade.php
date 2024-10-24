@@ -14,6 +14,13 @@
             background-color: #433F3F;
         }
 
+        header {
+            top: 0;
+            position: fixed;
+            z-index: 1000;
+            width: 100%;
+        }
+
         nav {
             top: 0;
             position: relative;
@@ -108,6 +115,7 @@
 </head>
 <body>
     <!-- Navbar -->
+    <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-black">
         <div class="container-fluid">
             <a class="navbar-brand mx-auto position-absolute start-50 translate-middle-x" href="{{ route('admin.dashboard') }}">
@@ -133,9 +141,10 @@
             </div>
         </div>
     </nav>
+    </header>
 
     <!-- Banner Content -->
-    <div class="container-fluid banner mt-5 mb-3" style="display: flex; justify-content: center;">
+    <div class="container-fluid banner mt-5 mb-3" style="display: flex; justify-content: center; padding-top: 55px;">
         <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" style="width: 85%; max-height: 500px;">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
