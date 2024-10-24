@@ -92,44 +92,64 @@
 
     <!-- Banner Content -->
     <div class="container-fluid banner mt-5 mb-3" style="display: flex; justify-content: center;">
-        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjag8ZsXLiRizVA8JGpauo0f5d1vaVryWWeBx_5UZyQBWbufyXDI6fYQNO3eAMUUfYccNJr7RfFV8ubgAVXhm2ThNPoHjCoS8NrfT9ecvP8J9jK9LzkEvKX3r8Q82vFQmDSy3eYnhYa4YJ5mHA82fFMjz6UZNK0eub-n517ZJ4zZC-6t17C-ONLC1qNQ_1C/s320/WhatsApp%20Image%202024-10-24%20at%2013.54.04.jpeg"
-         alt="banner">
+        <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" style="width: 85%; max-height: 500px;">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="{{url('asset/banner.jpeg')}}" class="d-block w-100" alt="..." style="height: 500px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{url('asset/banner.jpeg')}}" class="d-block w-100" alt="..." style="height: 500px; object-fit: cover;">
+                </div>
+                <div class="carousel-item">
+                    <img src="{{url('asset/banner.jpeg')}}" class="d-block w-100" alt="..." style="height: 500px; object-fit: cover;">
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
     </div>
 
     <!-- Main Content-->
     <div class="container mt-5 text-white" style="background-color: #201F1F;">
-        <h1>Products</h1>
+        <h1 class="text-center mb-3">Products</h1>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Image</th>
-                    <th>Price</th>
-                    <th>Size</th>
-                    <th>Stock</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($products as $product)
-                <tr>
-                    <td>{{ $product->name }}</td>
-                    <td><img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" width="100"></td>
-                    <td>{{ $product->price }}</td>
-                    <td>{{ $product->size }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td>
+        <!-- Product Rows -->
+        <div class="row" id="product-list">
+            @foreach ($products as $product)
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card">
+                <div class="card h-100 bg-dark text-white">
+                    <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $product->name }}</h5>
+                        <p class="card-text">{{ $product->price }} IDR</p>
+                        <p class="card-text">Size: {{ $product->size }}</p>
+                        <p class="card-text">Stock: {{ $product->stock }}</p>
                         <form action="{{ route('cart.add', $product->id) }}" method="POST">
                             @csrf
-                            <button type="submit">Add to Cart</button>
+                            <button type="submit" class="btn btn-warning">Add to Cart</button>
                         </form>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <a href="{{ route('cart.index') }}">View Cart</a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+
+        <!-- Pagination Numbers -->
+        <div class="d-flex justify-content-center mt-4">
+            <button class="btn btn-secondary" id="backToFirst" onclick="goToPage(1)"><< First Page</button>
+            <div id="pagination-numbers" class="mx-3"></div>
+        </div>
     </div>
 
     <!-- footer -->
@@ -140,5 +160,53 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+   <!-- JavaScript for Pagination -->
+<script>
+    const productsPerPage = 8;
+    let currentPage = 1;
+    const productCards = document.querySelectorAll('.product-card');
+    const totalPages = Math.ceil(productCards.length / productsPerPage);
+    const paginationNumbers = document.getElementById('pagination-numbers');
+
+    // Function to generate page numbers
+    function createPageNumbers() {
+        paginationNumbers.innerHTML = ''; // Clear previous page numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const pageButton = document.createElement('button');
+            pageButton.classList.add('btn', 'btn-light', 'mx-1');
+            pageButton.textContent = i;
+            pageButton.setAttribute('onclick', `goToPage(${i})`);
+            pageButton.setAttribute('id', `page-${i}`);
+            paginationNumbers.appendChild(pageButton);
+        }
+    }
+
+    // Function to show the products for the current page
+    function showPage(page) {
+        productCards.forEach((card, index) => {
+            card.style.display = (index >= (page - 1) * productsPerPage && index < page * productsPerPage) ? 'block' : 'none';
+        });
+
+        // Highlight the active page number
+        document.querySelectorAll('#pagination-numbers button').forEach(btn => {
+            btn.classList.remove('btn-warning');
+            btn.classList.add('btn-light');
+        });
+        document.getElementById(`page-${page}`).classList.remove('btn-light');
+        document.getElementById(`page-${page}`).classList.add('btn-warning');
+
+        // Update current page
+        currentPage = page;
+    }
+
+    // Function to go to a specific page
+    function goToPage(page) {
+        showPage(page);
+    }
+
+    // Show the first page initially and generate page numbers
+    createPageNumbers();
+    showPage(currentPage);
+</script>
 </body>
 </html>
