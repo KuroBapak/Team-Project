@@ -12,7 +12,7 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('image');
-            $table->decimal('price', 8, 2);
+            $table->decimal('price', 15, 0);
             $table->enum('size', ['kecil', 'sedang', 'besar']);
             $table->timestamps();
         });

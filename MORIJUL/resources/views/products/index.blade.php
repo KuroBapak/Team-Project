@@ -6,6 +6,8 @@
     <title>Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Add CSRF token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         /* CSS */
         body {
@@ -171,10 +173,10 @@
     <div class="container-fluid text-center pt-3" style="color: yellow">
         @if (session('success'))
         {{ session('success') }}
-@endif
-@if (session('error'))
+        @endif
+        @if (session('error'))
         {{ session('error') }}
-@endif
+        @endif
     </div>
 
     <!-- Main Content -->
@@ -192,20 +194,15 @@
                         <p class="card-text">{{ $product->price }} IDR</p>
                         <p class="card-text">Size: {{ $product->size }}</p>
                         <p class="card-text">Stock: {{ $product->stock }}</p>
-                        <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                        <!-- Modify form to work with AJAX -->
+                        <form class="add-to-cart-form">
                             @csrf
-                            <button type="submit" class="btn btn-warning">Add to Cart</button>
+                            <button type="button" class="btn btn-warning add-to-cart-btn" data-id="{{ $product->id }}">Add to Cart</button>
                         </form>
                     </div>
                 </div>
             </div>
             @endforeach
-        </div>
-
-        <!-- Pagination Numbers -->
-        <div class="d-flex justify-content-center mt-4">
-            <button class="btn btn-secondary" id="backToFirst" onclick="goToPage(1)"><< First Page</button>
-            <div id="pagination-numbers" class="mx-3"></div>
         </div>
     </div>
 
@@ -217,53 +214,35 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- JavaScript for Pagination -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        const productsPerPage = 8;
-        let currentPage = 1;
-        const productCards = document.querySelectorAll('.product-card');
-        const totalPages = Math.ceil(productCards.length / productsPerPage);
-        const paginationNumbers = document.getElementById('pagination-numbers');
+        $(document).ready(function() {
+            // Handle Add to Cart button click
+            $('.add-to-cart-btn').click(function(e) {
+                e.preventDefault(); // Prevent the form from submitting as usual
 
-        // Function to generate page numbers
-        function createPageNumbers() {
-            paginationNumbers.innerHTML = ''; // Clear previous page numbers
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.classList.add('btn', 'btn-light', 'mx-1');
-                pageButton.textContent = i;
-                pageButton.setAttribute('onclick', `goToPage(${i})`);
-                pageButton.setAttribute('id', `page-${i}`);
-                paginationNumbers.appendChild(pageButton);
-            }
-        }
+                // Get product ID from the button's data attribute
+                let productId = $(this).data('id');
+                let token = $('meta[name="csrf-token"]').attr('content'); // CSRF token
 
-        // Function to show the products for the current page
-        function showPage(page) {
-            productCards.forEach((card, index) => {
-                card.style.display = (index >= (page - 1) * productsPerPage && index < page * productsPerPage) ? 'block' : 'none';
+                // Make AJAX request to add product to cart
+                $.ajax({
+                    url: '/cart/add/' + productId,
+                    type: 'POST',
+                    data: {
+                        _token: token // Send CSRF token in the request
+                    },
+                    success: function(response) {
+                        // Show success message (you can customize this)
+                        alert('Product added to cart successfully!');
+                    },
+                    error: function(xhr) {
+                        // Show error message
+                        alert('Error adding product to cart.');
+                    }
+                });
             });
-
-            // Highlight the active page number
-            document.querySelectorAll('#pagination-numbers button').forEach(btn => {
-                btn.classList.remove('btn-warning');
-                btn.classList.add('btn-light');
-            });
-            document.getElementById(`page-${page}`).classList.remove('btn-light');
-            document.getElementById(`page-${page}`).classList.add('btn-warning');
-
-            // Update current page
-            currentPage = page;
-        }
-
-        // Function to go to a specific page
-        function goToPage(page) {
-            showPage(page);
-        }
-
-        // Show the first page initially and generate page numbers
-        createPageNumbers();
-        showPage(currentPage);
+        });
     </script>
 </body>
 </html>

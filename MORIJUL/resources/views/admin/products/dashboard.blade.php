@@ -91,8 +91,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-black">
         <div class="container-fluid">
             <a class="navbar-brand mx-auto position-absolute start-50 translate-middle-x" href="{{ route('admin.dashboard') }}">
-                <img src="{{ url('asset/logo.png') }}"
-                alt="logoweb" style="height: 150px;">
+                <img src="{{ url('asset/logo.png') }}" alt="logoweb" style="height: 150px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
                 <span class="navbar-toggler-icon"></span>
@@ -118,7 +117,7 @@
         <h1 class="mb-5">Admin Dashboard</h1>
         <!-- Table to display orders -->
         <h2>Orders</h2>
-        <div class="table-responsive"> <!-- Tambahkan div untuk membuat tabel responsif -->
+        <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
@@ -128,6 +127,7 @@
                         <th>Payment Type</th>
                         <th>Payment Status</th>
                         <th>Checkout Date & Time</th>
+                        <th>Ordered Products</th> <!-- New column for products -->
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -141,15 +141,22 @@
                         <td>{{ $order->payment_status }}</td>
                         <td>{{ \Carbon\Carbon::parse($order->created_at)->format('d-m-Y H:i:s') }}</td>
                         <td>
+                            <ul>
+                                @foreach($order->items as $item)
+                                    <li>{{ $item->product->name }} (x{{ $item->quantity }}) - {{ $item->price }} IDR</li>
+                                @endforeach
+                            </ul>
+                        </td>
+                        <td>
                             <!-- Button to update payment status -->
-                            <form action="{{ route('admin.updatePaymentStatus', $order->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.updatePaymentStatus', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure the items are paid?');">
                                 @csrf
                                 @method('PUT')
                                 <button type="submit" class="btn btn-success">Mark as Done</button>
                             </form>
 
                             <!-- Button to delete order -->
-                            <form action="{{ route('admin.deleteOrder', $order->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.deleteOrder', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -164,7 +171,7 @@
         <!-- Buttons section with proper alignment -->
         <div class="btn-container mt-3">
             <a href="{{ route('admin.products') }}" class="btn btn-primary">Manage Products</a>
-            <form action="{{ route('logout') }}" method="POST">
+            <form action="{{ route('logout') }}" method="POST" onsubmit="return confirm('Are you sure you want to logout?');">
                 @csrf
                 <button type="submit" class="btn btn-danger">Logout</button>
             </form>

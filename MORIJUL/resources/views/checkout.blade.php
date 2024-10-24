@@ -106,7 +106,7 @@
     <!-- Main -->
     <div class="container mt-5 text-white" style="background-color: #201F1F;">
         <h1>Checkout</h1>
-        <form action="{{ route('order.store') }}" method="POST">
+        <form action="{{ route('order.store') }}" method="POST" onsubmit="return confirm('Are you sure the name and room number are correct?');">
             @csrf
             <div class="form-group">
                 <label for="buyer_name" class="mb-2">Buyer Name:</label>

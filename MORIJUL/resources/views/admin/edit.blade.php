@@ -98,7 +98,7 @@
     <div class="container mt-5">
         <div class="form-container">
             <h1>Edit Product</h1>
-            <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return confirm('Are you sure you want to edit this product?');">
                 @csrf
                 @method('PUT')
                 <div class="form-group">

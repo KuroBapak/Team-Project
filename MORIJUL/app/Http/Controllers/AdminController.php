@@ -35,11 +35,11 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $products = Product::all();
-        $orders = Order::with('items')->get(); // Fetch orders with order items
+        $orders = Order::with('items.product')->get(); // Load order items with products
 
-        return view('admin.products.dashboard', compact('products', 'orders'));
+        return view('admin.products.dashboard', compact('orders'));
     }
+
 
     public function login(Request $request)
 {
