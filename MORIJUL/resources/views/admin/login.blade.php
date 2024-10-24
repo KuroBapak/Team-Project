@@ -75,6 +75,25 @@
                 font-size: 1.5rem;
             }
         }
+
+        /* Styling for login form */
+        .login-container {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .login-form input {
+            margin-bottom: 15px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .login-form label {
+            margin-bottom: 5px;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -105,22 +124,22 @@
     </nav>
 
     <div class="container mt-5 text-white" style="background-color: #201F1F;">
-        <div class="row">
+        <div class="row login-container">
             <div class="col-6">
                 <img src="{{ url('asset/pu.jpeg')}}" class="img-fluid rounded" style="height: 460px; width: 100%;" alt="...">
             </div>
-            <div class="col-6">
-                <div class="container-fluid mt-5">
+            <div class="col-6 d-flex align-items-center">
+                <div class="container-fluid login-form">
                     <h2>Login Admin</h2>
                     <form action="{{ route('login') }}" method="POST">
                         @csrf
-                        <div>
+                        <div class="form-group">
                             <label for="username">Username</label>
-                            <input type="text" name="username" id="username" required>
+                            <input type="text" name="username" id="username" class="form-control" required>
                         </div>
-                        <div>
+                        <div class="form-group">
                             <label for="password">Password</label>
-                            <input type="password" name="password" id="password" required>
+                            <input type="password" name="password" id="password" class="form-control" required>
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Login</button>
                     </form>
@@ -128,7 +147,6 @@
             </div>
         </div>
     </div>
-
 
     <footer class="text-center text-white mt-5 bg-black">
         <div class="container bg-black">
@@ -139,4 +157,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

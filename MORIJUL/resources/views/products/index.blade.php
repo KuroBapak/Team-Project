@@ -60,6 +60,48 @@
             max-height: 400px;
             object-fit: cover;
         }
+
+        /* Style for the alternative content on small screens */
+        .small-screen-banner {
+            display: none;
+            text-align: center;
+            background-color: #201F1F;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .carousel-inner img {
+                height: 300px;
+                object-fit: cover;
+            }
+        }
+
+        @media (max-width: 576px) {
+            /* Hide carousel on very small screens */
+            .carousel {
+                display: none;
+            }
+
+            /* Show alternative content on small screens */
+            .small-screen-banner {
+                display: block;
+            }
+        }
+
+        /* CSS for Product Cards */
+        .product-card {
+            padding: 10px; /* Add padding around each product card */
+        }
+
+        /* Media query for smaller screens */
+        @media (max-width: 576px) {
+            .product-card {
+                margin-bottom: 15px; /* More space below each card on small screens */
+            }
+        }
     </style>
 </head>
 <body>
@@ -120,16 +162,22 @@
         </div>
     </div>
 
-    <!-- Main Content-->
+    <!-- Small screen alternative content -->
+    <div class="small-screen-banner">
+        <h3>Welcome to Our Store!</h3>
+        <p>Explore our products below. Enjoy shopping!</p>
+    </div>
+
+    <!-- Main Content -->
     <div class="container mt-5 text-white" style="background-color: #201F1F;">
-        <h1 class="text-center mb-3">Products</h1>
+        <h1 class="text-center mb-3">Our Products</h1>
 
         <!-- Product Rows -->
         <div class="row" id="product-list">
             @foreach ($products as $product)
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card">
-                <div class="card h-100 bg-dark text-white">
-                    <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 product-card" style="padding: 10px;"> <!-- Add padding here -->
+                <div class="card h-100 text-white" style="background-color: #3e3e3e">
+                    <img src="{{ asset('storage/' . $product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 200px; object-fit: cover; padding:10px;">
                     <div class="card-body">
                         <h5 class="card-title">{{ $product->name }}</h5>
                         <p class="card-text">{{ $product->price }} IDR</p>
@@ -160,53 +208,53 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-   <!-- JavaScript for Pagination -->
-<script>
-    const productsPerPage = 8;
-    let currentPage = 1;
-    const productCards = document.querySelectorAll('.product-card');
-    const totalPages = Math.ceil(productCards.length / productsPerPage);
-    const paginationNumbers = document.getElementById('pagination-numbers');
+    <!-- JavaScript for Pagination -->
+    <script>
+        const productsPerPage = 8;
+        let currentPage = 1;
+        const productCards = document.querySelectorAll('.product-card');
+        const totalPages = Math.ceil(productCards.length / productsPerPage);
+        const paginationNumbers = document.getElementById('pagination-numbers');
 
-    // Function to generate page numbers
-    function createPageNumbers() {
-        paginationNumbers.innerHTML = ''; // Clear previous page numbers
-        for (let i = 1; i <= totalPages; i++) {
-            const pageButton = document.createElement('button');
-            pageButton.classList.add('btn', 'btn-light', 'mx-1');
-            pageButton.textContent = i;
-            pageButton.setAttribute('onclick', `goToPage(${i})`);
-            pageButton.setAttribute('id', `page-${i}`);
-            paginationNumbers.appendChild(pageButton);
+        // Function to generate page numbers
+        function createPageNumbers() {
+            paginationNumbers.innerHTML = ''; // Clear previous page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.classList.add('btn', 'btn-light', 'mx-1');
+                pageButton.textContent = i;
+                pageButton.setAttribute('onclick', `goToPage(${i})`);
+                pageButton.setAttribute('id', `page-${i}`);
+                paginationNumbers.appendChild(pageButton);
+            }
         }
-    }
 
-    // Function to show the products for the current page
-    function showPage(page) {
-        productCards.forEach((card, index) => {
-            card.style.display = (index >= (page - 1) * productsPerPage && index < page * productsPerPage) ? 'block' : 'none';
-        });
+        // Function to show the products for the current page
+        function showPage(page) {
+            productCards.forEach((card, index) => {
+                card.style.display = (index >= (page - 1) * productsPerPage && index < page * productsPerPage) ? 'block' : 'none';
+            });
 
-        // Highlight the active page number
-        document.querySelectorAll('#pagination-numbers button').forEach(btn => {
-            btn.classList.remove('btn-warning');
-            btn.classList.add('btn-light');
-        });
-        document.getElementById(`page-${page}`).classList.remove('btn-light');
-        document.getElementById(`page-${page}`).classList.add('btn-warning');
+            // Highlight the active page number
+            document.querySelectorAll('#pagination-numbers button').forEach(btn => {
+                btn.classList.remove('btn-warning');
+                btn.classList.add('btn-light');
+            });
+            document.getElementById(`page-${page}`).classList.remove('btn-light');
+            document.getElementById(`page-${page}`).classList.add('btn-warning');
 
-        // Update current page
-        currentPage = page;
-    }
+            // Update current page
+            currentPage = page;
+        }
 
-    // Function to go to a specific page
-    function goToPage(page) {
-        showPage(page);
-    }
+        // Function to go to a specific page
+        function goToPage(page) {
+            showPage(page);
+        }
 
-    // Show the first page initially and generate page numbers
-    createPageNumbers();
-    showPage(currentPage);
-</script>
+        // Show the first page initially and generate page numbers
+        createPageNumbers();
+        showPage(currentPage);
+    </script>
 </body>
 </html>

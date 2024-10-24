@@ -45,7 +45,7 @@
         }
         footer {
             width: 100%;
-            margin-top: auto; /* pushes footer to the bottom */
+            position: relative;
         }
         .form-container {
             max-width: 600px;
