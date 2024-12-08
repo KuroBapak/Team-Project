@@ -119,7 +119,7 @@
             <div class="form-group">
                 <label for="payment_type" class="mb-2">Payment Type:</label>
                 <select name="payment_type" class="form-control" required>
-                    <option value="COD">Cash on Delivery</option>
+
                     <option value="QRIS">QRIS</option>
                 </select>
             </div>
