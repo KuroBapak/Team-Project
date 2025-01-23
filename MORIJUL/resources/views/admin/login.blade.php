@@ -150,7 +150,7 @@
 
     <footer class="text-center text-white mt-5 bg-black">
         <div class="container bg-black">
-            <p>&copy; 2024 Morijul. All rights reserved.</p>
+            <p>&copy; 2025 Morijul. All rights reserved.</p>
         </div>
     </footer>
 
