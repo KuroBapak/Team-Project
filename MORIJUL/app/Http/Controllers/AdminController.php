@@ -54,34 +54,43 @@ class AdminController extends Controller
 
 
     public function login(Request $request)
-{
-    // Validasi input
-    $request->validate([
-        'username' => 'required',
-        'password' => 'required',
-    ]);
+    {
+        // 1. Validate input
+        $data = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-    // Cek user berdasarkan username
-    $admin = Admin::where('username', $request->username)->first();
+        // 2. Retrieve user by username
+        $user = Admin::where('username', $data['username'])->first();
 
-    // Jika user ditemukan dan password cocok
-    if ($admin && Hash::check($request->password, $admin->password)) {
-        // Simpan admin dalam session
-        session(['admin' => $admin->id]);
+        // 3. Verify password
+        if ($user && Hash::check($data['password'], $user->password)) {
+            // 4. Save ID & role
+            session([
+                'user_id' => $user->id,
+                'role'    => $user->role,
+            ]);
 
-        // Redirect ke dashboard admin
-        return redirect()->route('admin.dashboard');
+            // 5. Redirect based on role
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('delivery.dashboard');
+        }
+
+        // Auth failed
+        return back()->withErrors(['login' => 'Username atau password salah']);
     }
 
-    // Jika gagal login
-    return back()->withErrors(['login' => 'Username atau password salah']);
-}
 
 
-public function logout()
-{
-    session()->forget('admin'); // Hapus session admin
-    return redirect()->route('login'); // Arahkan ke halaman login
-}
+
+    public function logout()
+    {
+        session()->forget(['user_id','role']);
+        return redirect()->route('login');
+    }
+
 
 }

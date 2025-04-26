@@ -1,6 +1,5 @@
 <?php
 
-// Database\Seeders\AdminSeeder.php
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -9,14 +8,23 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
-// database\seeders\AdminSeeder.php
-public function run()
-{
-    // Buat user admin dengan password yang di-hash
-    Admin::create([
-        'username' => 'admin',
-        'password' => Hash::make('admin'), // Enkripsi password
-    ]);
-}
-}
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        // Create a default admin user
+        Admin::create([
+            'username' => 'admin',
+            'password' => Hash::make('admin'),
+            'role'     => 'admin',
+        ]);
 
+        // (Optional) Create a sample delivery user
+        Admin::create([
+            'username' => 'delivery',
+            'password' => Hash::make('delivery'),
+            'role'     => 'delivery',
+        ]);
+    }
+}

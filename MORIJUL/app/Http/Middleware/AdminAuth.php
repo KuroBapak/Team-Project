@@ -9,13 +9,13 @@ class AdminAuth
 {
     public function handle(Request $request, Closure $next)
     {
-        if (!session()->has('admin')) {
-            // Jika tidak ada session admin, redirect ke halaman login
-            return redirect()->route('login');
+        if (session('role') !== 'admin') {
+            // Non-admin users get sent to delivery area
+            return redirect()->route('delivery.dashboard');
         }
-
         return $next($request);
     }
+
 
 }
 

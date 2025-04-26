@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\DeliveryController;
 use App\Http\Controllers\OrderController;
 
 /*
@@ -30,8 +31,11 @@ Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
 // Route for updating cart quantity
 Route::post('/cart/update/{id}/{action}', [CartController::class, 'updateCartQuantity'])->name('cart.update');
 
-
-
+// Delivery area
+Route::middleware('delivery')->group(function(){
+    Route::get('/delivery/dashboard', [DeliveryController::class, 'dashboard'])
+         ->name('delivery.dashboard');
+});
 
 // Route untuk halaman dashboard admin (dilindungi oleh middleware admin)
 Route::middleware('admin')->group(function () {

@@ -137,6 +137,11 @@
                             <i class="fas fa-home" style="font-size: 1.5em;"></i>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="chat is here">
+                            <i class="fas fa-home" style="font-size: 1.5em;"></i>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

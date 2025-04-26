@@ -119,7 +119,7 @@
     </nav>
 
     <div class="container mt-5 text-white" style="background-color: #201F1F;">
-        <h1 class="mb-5">Admin Dashboard</h1>
+        <h1 class="mb-5">Delivery Dashboard</h1>
         <!-- Table to display orders -->
         <h2>Orders</h2>
         <div class="table-responsive">
@@ -131,7 +131,6 @@
                         <th>Total Purchase</th>
                         <th>Payment Type</th>
                         <th>Payment Status</th>
-                        <th>Verification Code</th>
                         <th>Checkout Date & Time</th>
                         <th>Ordered Products</th> <!-- New column for products -->
                         <th>Actions</th>
@@ -145,7 +144,6 @@
                         <td>{{ $order->total_amount }}</td>
                         <td>{{ $order->payment_type }}</td>
                         <td>{{ $order->payment_status }}</td>
-                        <td>{{ $order->verification_code }}</td>
                         <td>{{ \Carbon\Carbon::parse($order->created_at)->format('d-m-Y H:i:s') }}</td>
                         <td>
                             <ul>
@@ -168,13 +166,6 @@
                                     </button>
                                 </div>
                             </form>
-
-                            <!-- Button to delete order -->
-                            <form action="{{ route('admin.deleteOrder', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
                         </td>
                     </tr>
                     @endforeach
@@ -184,7 +175,6 @@
 
         <!-- Buttons section with proper alignment -->
         <div class="btn-container mt-3">
-            <a href="{{ route('admin.products') }}" class="btn btn-primary">Manage Products</a>
             <form action="{{ route('logout') }}" method="POST" onsubmit="return confirm('Are you sure you want to logout?');">
                 @csrf
                 <button type="submit" class="btn btn-danger">Logout</button>

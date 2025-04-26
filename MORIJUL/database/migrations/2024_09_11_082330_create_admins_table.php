@@ -12,10 +12,10 @@ class CreateAdminsTable extends Migration
             $table->id();
             $table->string('username')->unique();
             $table->string('password');
+            $table->enum('role', ['admin', 'delivery'])->default('admin');
             $table->timestamps();
         });
     }
-
 
     public function down()
     {
