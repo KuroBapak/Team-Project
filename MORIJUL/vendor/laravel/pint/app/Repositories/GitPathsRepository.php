@@ -59,16 +59,15 @@ class GitPathsRepository implements PathsRepository
             'untracked' => tap(new Process(['git', 'ls-files', '--others', '--exclude-standard', '--', '**.php']))->run(),
         ];
 
+        /** @var Collection<int, string> $files */
         $files = collect($files)
             ->each(fn ($process) => abort_if(
                 boolean: ! $process->isSuccessful(),
                 code: 1,
                 message: 'The [--diff] option is only available when using Git.',
             ))
-            ->map(fn ($process) => $process->getOutput())
-            ->map(fn ($output) => explode(PHP_EOL, $output))
+            ->map(fn ($process) => preg_split('/\R+/', $process->getOutput(), flags: PREG_SPLIT_NO_EMPTY))
             ->flatten()
-            ->filter()
             ->unique()
             ->values()
             ->map(fn ($s) => (string) $s);

@@ -10,7 +10,7 @@ use Tests\TestCase;
 #[Group('coverage')]
 class CoverageTest extends TestCase
 {
-    public function testExample()
+    public function test_example()
     {
         $this->assertTrue(true);
     }

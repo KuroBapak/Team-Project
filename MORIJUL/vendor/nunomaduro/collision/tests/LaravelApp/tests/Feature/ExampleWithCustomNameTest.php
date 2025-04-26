@@ -26,7 +26,7 @@ class ExampleWithCustomNameTest extends TestCase implements HasPrintableTestCase
     }
 
     #[Group('custom-name')]
-    public function testPassExample()
+    public function test_pass_example()
     {
         $this->assertTrue(true);
     }

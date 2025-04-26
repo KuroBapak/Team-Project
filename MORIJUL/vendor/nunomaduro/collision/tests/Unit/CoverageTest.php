@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 class CoverageTest extends TestCase
 {
     #[Test]
-    public function testGetPath(): void
+    public function test_get_path(): void
     {
         $temporaryDirectory = implode(DIRECTORY_SEPARATOR, [
             dirname(__DIR__, 2),
@@ -23,7 +23,7 @@ class CoverageTest extends TestCase
     }
 
     #[Test]
-    public function testUsingXdebug(): void
+    public function test_using_xdebug(): void
     {
         $this->assertTrue(Coverage::usingXdebug());
     }

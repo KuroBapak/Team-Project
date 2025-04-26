@@ -50,14 +50,14 @@ jobs:
           fetch-depth: 0
 
       - name: Set up PHP
-        uses: shivammathur/setup-php@2.31.1
+        uses: shivammathur/setup-php@2.32.0
         with:
           php-version: 7.4
           tools: composer:v2
           coverage: none
 
       - name: Install dependencies
-        uses: nick-fields/retry@v3.0.0
+        uses: nick-fields/retry@v3.0.2
         with:
           timeout_minutes: 5
           max_attempts: 5

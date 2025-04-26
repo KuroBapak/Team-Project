@@ -32,14 +32,14 @@ jobs:
         uses: actions/checkout@v4.2.2
 
       - name: Install PHP
-        uses: shivammathur/setup-php@2.31.1
+        uses: shivammathur/setup-php@2.32.0
         with:
           php-version: '7.4'
           tools: composer:v2
           coverage: none
 
       - name: Install dependencies
-        uses: nick-fields/retry@v3.0.0
+        uses: nick-fields/retry@v3.0.2
         with:
           timeout_minutes: 5
           max_attempts: 5
@@ -49,7 +49,7 @@ jobs:
         run: make build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4.4.3
+        uses: actions/upload-artifact@v4.6.1
         with:
           name: binaries
           path: build/*/psysh

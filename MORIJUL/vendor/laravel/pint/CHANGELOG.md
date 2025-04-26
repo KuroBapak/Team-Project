@@ -1,6 +1,28 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/pint/compare/v1.19.0...main)
+## [Unreleased](https://github.com/laravel/pint/compare/v1.21.2...main)
+
+## [v1.21.2](https://github.com/laravel/pint/compare/v1.21.1...v1.21.2) - 2025-03-14
+
+- Bumps dependencies
+
+## [v1.21.1](https://github.com/laravel/pint/compare/v1.21.0...v1.21.1) - 2025-03-11
+
+* Fix GitHub Action failing 'Publish the released PHAR' due to deprecated action 'actions/upload-artifact' by [@matthewnessworthy](https://github.com/matthewnessworthy) in https://github.com/laravel/pint/pull/347
+* Bump dependencies by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/350
+
+## [v1.21.0](https://github.com/laravel/pint/compare/v1.20.0...v1.21.0) - 2025-02-18
+
+* Add `no_unneeded_import_alias` rule by [@claudiodekker](https://github.com/claudiodekker) in https://github.com/laravel/pint/pull/334
+* PHP 8.4 support by [@markwalet](https://github.com/markwalet) in https://github.com/laravel/pint/pull/330
+* Bump dependencies by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/pint/pull/337
+* Bump dependencies (php-cs-fixer fixes) by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/pint/pull/338
+* Split files based on `/\R+/` regex for `--diff`, same as `--dirty` by [@erikn69](https://github.com/erikn69) in https://github.com/laravel/pint/pull/339
+* Bump dependencies by [@Jubeki](https://github.com/Jubeki) in https://github.com/laravel/pint/pull/343
+
+## [v1.20.0](https://github.com/laravel/pint/compare/v1.19.0...v1.20.0) - 2025-01-14
+
+* Adds `--diff` option. https://github.com/laravel/pint/pull/327
 
 ## [v1.19.0](https://github.com/laravel/pint/compare/v1.18.3...v1.19.0) - 2024-12-30
 

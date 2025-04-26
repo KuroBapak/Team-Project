@@ -10,24 +10,24 @@ error_reporting(E_ALL);
 class ExampleTest extends TestCase
 {
     #[Group('fail')]
-    public function testFailExample()
+    public function test_fail_example()
     {
         $this->assertFalse(true);
     }
 
     #[Group('todo')]
-    public function testTodoExample()
+    public function test_todo_example()
     {
         $this->markTestSkipped('__TODO__');
     }
 
-    public function testBasicTest()
+    public function test_basic_test()
     {
         $this->assertTrue(true);
     }
 
     #[Group('notices')]
-    public function testUserNotice()
+    public function test_user_notice()
     {
         trigger_error('This is a user notice');
 
@@ -35,7 +35,7 @@ class ExampleTest extends TestCase
     }
 
     #[Group('notices')]
-    public function testUserNoticeTwo()
+    public function test_user_notice_two()
     {
         trigger_error('This is another user notice');
 
@@ -43,7 +43,7 @@ class ExampleTest extends TestCase
     }
 
     #[Group('warnings')]
-    public function testWarning()
+    public function test_warning()
     {
         $this->blabla;
 
@@ -51,7 +51,7 @@ class ExampleTest extends TestCase
     }
 
     #[Group('warnings')]
-    public function testUserWarning()
+    public function test_user_warning()
     {
         trigger_error('This is a user warning', E_USER_WARNING);
 
@@ -59,7 +59,7 @@ class ExampleTest extends TestCase
     }
 
     #[Group('deprecations')]
-    public function testDeprecation()
+    public function test_deprecation()
     {
         str_contains(null, null);
 
@@ -67,7 +67,7 @@ class ExampleTest extends TestCase
     }
 
     #[Group('deprecations')]
-    public function testUserDeprecation()
+    public function test_user_deprecation()
     {
         trigger_deprecation('foo', '1.0', 'This is a deprecation description');
 

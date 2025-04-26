@@ -18,7 +18,7 @@ class DatasetsTest extends TestCase
     }
 
     #[DataProvider('provideData')]
-    public function testWithOutput(string $data)
+    public function test_with_output(string $data)
     {
         echo $data;
 

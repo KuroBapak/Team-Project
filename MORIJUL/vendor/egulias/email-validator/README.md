@@ -34,7 +34,7 @@ This library aims to support RFCs:
 * [Spoofchecking](/src/Validation/Extra/SpoofCheckValidation.php) and
 [DNSCheckValidation](/src/Validation/DNSCheckValidation.php) validation
 requires that your PHP system has the
-[PHP Internationalization Libraries](https://php.net/manual/en/book.intl.php) 
+[PHP Internationalization Libraries](https://php.net/manual/en/book.intl.php)
 (also known as PHP Intl)
 
 **Note**: `PHP version upgrades will happen to accomodate to the pace of major
@@ -109,7 +109,6 @@ Validations not present in the RFCs
 1. [SpoofCheckValidation](/src/Validation/Extra/SpoofCheckValidation.php): 
 Will check for multi-utf-8 chars that can signal an erroneous email name.
 
-
 ### How to extend
 
 It's easy! You just need to implement
@@ -126,7 +125,8 @@ Is short and simple and will help a lot.
 (You can find current contributors
 [here](https://github.com/egulias/EmailValidator/graphs/contributors))
 
-As this is a port from another library and work, here are other people related to the previous one:
+As this is a port from another library and work, here are other people related
+to the previous one:
 
 * Ricard Clau [@ricardclau](https://github.com/ricardclau):
 Performance against PHP built-in filter_var (v2 and earlier)

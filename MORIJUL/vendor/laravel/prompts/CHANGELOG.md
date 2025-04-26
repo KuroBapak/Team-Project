@@ -1,6 +1,14 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/prompts/compare/v0.3.2...main)
+## [Unreleased](https://github.com/laravel/prompts/compare/v0.3.4...main)
+
+## [v0.3.4](https://github.com/laravel/prompts/compare/v0.3.3...v0.3.4) - 2025-01-24
+
+* Supports Laravel 12 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/prompts/pull/182
+
+## [v0.3.3](https://github.com/laravel/prompts/compare/v0.3.2...v0.3.3) - 2024-12-30
+
+* Add page up & down key inputs by [@CamKem](https://github.com/CamKem) in https://github.com/laravel/prompts/pull/179
 
 ## [v0.3.2](https://github.com/laravel/prompts/compare/v0.3.1...v0.3.2) - 2024-11-12
 

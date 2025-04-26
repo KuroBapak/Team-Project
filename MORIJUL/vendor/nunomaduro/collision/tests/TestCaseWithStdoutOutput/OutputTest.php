@@ -8,20 +8,20 @@ use PHPUnit\Framework\TestCase;
 
 class OutputTest extends TestCase
 {
-    public function testWithOutput()
+    public function test_with_output()
     {
         echo 'Foo';
 
         $this->assertTrue(true);
     }
 
-    public function testNothingSpecial()
+    public function test_nothing_special()
     {
         // This shouldn't have any output
         $this->assertTrue(true);
     }
 
-    public function testWithNoOutput()
+    public function test_with_no_output()
     {
         $this->expectOutputRegex('/Bar/');
 

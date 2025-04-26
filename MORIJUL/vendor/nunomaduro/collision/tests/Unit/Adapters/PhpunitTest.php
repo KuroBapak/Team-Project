@@ -6,20 +6,14 @@ namespace Tests\Unit\Adapters;
 
 use NunoMaduro\Collision\Adapters\Phpunit\Printers\DefaultPrinter;
 use PHPUnit\Framework\Attributes\Test;
+use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Process\Process;
 
 class PhpunitTest extends TestCase
 {
-    public function setUp(): void
-    {
-        if (PHP_VERSION_ID >= 80400) {
-            $this->markTestSkipped('Test skipped on PHP 8.4');
-        }
-    }
-
     #[Test]
-    public function itIsAPrinter(): void
+    public function it_is_a_printer(): void
     {
         $this->assertInstanceOf(DefaultPrinter::class, new DefaultPrinter(true));
     }
@@ -40,7 +34,7 @@ class PhpunitTest extends TestCase
     }
 
     #[Test]
-    public function itHasTests(): void
+    public function it_has_tests(): void
     {
         $output = $this->runCollisionTests([
             '--exclude-group',
@@ -66,7 +60,7 @@ EOF,
     }
 
     #[Test]
-    public function itHasCustomTestCaseName(): void
+    public function it_has_custom_test_case_name(): void
     {
         $output = $this->runCollisionTests([
             '--group',
@@ -85,7 +79,7 @@ EOF,
     }
 
     #[Test]
-    public function itPrintedUnexpectedOutput(): void
+    public function it_printed_unexpected_output(): void
     {
         $output = $this->runCollisionTests([
             '--group',
@@ -105,7 +99,7 @@ EOF,
     }
 
     #[Test]
-    public function itHasATodo(): void
+    public function it_has_a_todo(): void
     {
         $output = $this->runCollisionTests([
             '--group',
@@ -124,7 +118,7 @@ EOF,
     }
 
     #[Test]
-    public function itHasRecap(): void
+    public function it_has_recap(): void
     {
         $output = $this->runCollisionTests([
             '--exclude-group',
@@ -135,10 +129,31 @@ EOF,
             'Tests:    2 deprecated, 2 warnings, 1 risky, 1 incomplete, 2 notices, 1 todo, 1 skipped, 9 passed (16 assertions)',
             $output
         );
+
+        $this->assertConsoleOutputNotContainsString(
+            'Random Order Seed:',
+            $output
+        );
     }
 
     #[Test]
-    public function itInformsTheUserWhenNoTestsAreExecuted(): void
+    public function it_has_recap_with_random_order_seed(): void
+    {
+        $output = $this->runCollisionTests([
+            '--order-by=random',
+            '--random-order-seed=123',
+            '--exclude-group',
+            'fail,environmentTesting,environmentCustomVariables',
+        ]);
+
+        $this->assertConsoleOutputContainsString(
+            'Random Order Seed: 123',
+            $output
+        );
+    }
+
+    #[Test]
+    public function it_informs_the_user_when_no_tests_are_executed(): void
     {
         $output = $this->runCollisionTests([
             '--filter',
@@ -152,7 +167,7 @@ EOF,
     }
 
     #[Test]
-    public function itHasFailure(): void
+    public function it_has_failure(): void
     {
         $output = $this->runCollisionTests([], 1);
 
@@ -165,13 +180,13 @@ EOF,
   at tests/LaravelApp/tests/Unit/ExampleTest.php:15
      11▕ {
      12▕     #[Group('fail')]
-     13▕     public function testFailExample()
+     13▕     public function test_fail_example()
      14▕     {
   ➜  15▕         $code
      16▕     }
      17▕$space
      18▕     #[Group('todo')]
-     19▕     public function testTodoExample()
+     19▕     public function test_todo_example()
 
   1   tests/LaravelApp/tests/Unit/ExampleTest.php:15
 
@@ -181,6 +196,10 @@ EOF
 
     private function runCollisionTests(array $arguments = [], int $exitCode = 0): string
     {
+        if (! file_exists('./vendor/bin/pest')) {
+            $this->markTestSkipped('Pest is not installed.');
+        }
+
         $process = new Process(array_merge([
             './vendor/pestphp/pest/bin/pest',
             '-c',
@@ -208,8 +227,12 @@ EOF;
     }
 
     #[Test]
-    public function itHasOutputInStdoutWithBeStrictAboutOutputDuringTestsFalse(): void
+    public function it_has_output_in_stdout_with_be_strict_about_output_during_tests_false(): void
     {
+        if (! file_exists('./vendor/bin/pest')) {
+            $this->markTestSkipped('Pest is not installed.');
+        }
+
         $process = new Process([
             './vendor/bin/pest',
             '-c',
@@ -223,19 +246,29 @@ EOF;
 
         $process->run();
 
-        $basePath = getcwd();
+        $output = $process->getOutput();
 
-        $this->assertConsoleOutputContainsString(<<<OUTPUT
+        try {
+            $this->assertConsoleOutputContainsString(<<<OUTPUT
 
-   WARN  TestCaseWithStdoutOutput\OutputTest
-  ! with output → This test printed output: Foo
-  ✓ nothing special
-  ✓ with no output
+               WARN  TestCaseWithStdoutOutput\OutputTest
+              ! with output → This test printed output: Foo
+              ✓ nothing special
+              ✓ with no output
 
-  Tests:    1 risky, 2 passed (3 assertions)
-OUTPUT
-            , $process->getOutput()
-        );
+              Tests:    1 risky, 2 passed (3 assertions)
+            OUTPUT, $output);
+        } catch (ExpectationFailedException) {
+            $this->assertConsoleOutputContainsString(<<<OUTPUT
+
+               WARN  TestCaseWithStdoutOutput\OutputTest
+              ! with output → Test code or tested code printed unexpected output: Foo
+              ✓ nothing special
+              ✓ with no output
+
+              Tests:    1 risky, 2 passed (3 assertions)
+            OUTPUT, $output);
+        }
 
         $this->assertConsoleOutputNotContainsString(
             'Bar',

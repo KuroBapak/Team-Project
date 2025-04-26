@@ -10,7 +10,7 @@ use Tests\TestCase;
 class ExampleWithUnexpectedOutputTest extends TestCase
 {
     #[Group('unexpected-output')]
-    public function testPassExample()
+    public function test_pass_example()
     {
         echo 'This is an unexpected output';
 

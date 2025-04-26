@@ -13,6 +13,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\Small;
+use PHPUnit\Framework\Attributes\Ticket;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
@@ -35,6 +36,7 @@ use SebastianBergmann\Type\TestFixture\ClassWithMethodThatDeclaresNeverReturnTyp
 use SebastianBergmann\Type\TestFixture\ClassWithMethodThatDeclaresNullReturnType;
 use SebastianBergmann\Type\TestFixture\ClassWithMethodThatDeclaresTrueReturnType;
 use SebastianBergmann\Type\TestFixture\ClassWithProperties;
+use SebastianBergmann\Type\TestFixture\InterfaceWithMethodThatReturnsObjectOrIterable;
 use SebastianBergmann\Type\TestFixture\ParentClass;
 
 #[CoversClass(ReflectionMapper::class)]
@@ -328,6 +330,10 @@ final class ReflectionMapperTest extends TestCase
         $this->assertSame('(SebastianBergmann\Type\TestFixture\A&SebastianBergmann\Type\TestFixture\B&SebastianBergmann\Type\TestFixture\D)|int|null', $types[0]->type()->asString());
     }
 
+    /**
+     * @param class-string     $expectedTypeClass
+     * @param non-empty-string $propertyName
+     */
     #[DataProvider('propertiesProvider')]
     public function testMapsFromPropertyType(string $expectedTypeClass, string $expectedString, string $propertyName): void
     {
@@ -336,5 +342,20 @@ final class ReflectionMapperTest extends TestCase
 
         $this->assertInstanceOf($expectedTypeClass, $type);
         $this->assertSame($expectedString, $type->asString());
+    }
+
+    #[Ticket('https://github.com/sebastianbergmann/type/issues/33')]
+    public function testClassTypesAreRemovedFromUnionThatAlsoContainsGenericObjectType(): void
+    {
+        $type = (new ReflectionMapper)->fromReturnType(
+            new ReflectionMethod(
+                InterfaceWithMethodThatReturnsObjectOrIterable::class,
+                'doSomething',
+            ),
+        );
+
+        $this->assertTrue($type->isUnion());
+        $this->assertSame('array|object', $type->name());
+        $this->assertSame('array|object', $type->asString());
     }
 }
