@@ -2,112 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product; // Pastikan model Product sudah ada
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session; // Mengimpor Session facade
+use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
 {
     // Fungsi untuk menambah produk ke cart
     public function addToCart(Request $request, $id)
     {
-        // Ambil produk berdasarkan ID
         $product = Product::find($id);
-
-        // Cek apakah produk ada
-        if (!$product) {
+        if (! $product) {
             return redirect()->back()->with('error', 'Product not found.');
         }
 
-        // Ambil cart dari session atau buat cart baru jika belum ada
         $cart = Session::get('cart', []);
+        $currentQty = $cart[$id]['quantity'] ?? 0;
 
-        // Jika produk sudah ada di cart, tambahkan quantity
+        // Blokir jika melebihi stok
+        if ($currentQty + 1 > $product->stock) {
+            return redirect()->back()
+                ->with('error', "Cannot add more than {$product->stock} of “{$product->name}”.");
+        }
+
+        // Tambah ke cart
         if (isset($cart[$id])) {
             $cart[$id]['quantity']++;
         } else {
-            // Jika produk belum ada, tambahkan produk baru ke cart
             $cart[$id] = [
-                "id" => $product->id,
-                "name" => $product->name,
-                "quantity" => 1,
-                "price" => $product->price,
-                "image" => $product->image,
+                'id'       => $product->id,
+                'name'     => $product->name,
+                'quantity' => 1,
+                'price'    => $product->price,
+                'image'    => $product->image,
             ];
         }
 
-        // Simpan cart ke session
         Session::put('cart', $cart);
-
-        // Redirect kembali dengan pesan sukses
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
 
     // Menampilkan halaman cart
     public function index()
     {
-        $cartItems = Session::get('cart', []); // Ambil item dari session cart
-        $subtotal = collect($cartItems)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
-        });
-
+        $cartItems = Session::get('cart', []);
+        $subtotal  = collect($cartItems)->sum(fn($i) => $i['price'] * $i['quantity']);
         return view('cart.index', compact('cartItems', 'subtotal'));
     }
 
     // Proses ke halaman checkout
     public function checkout()
     {
-        // Ambil data cart dari session
         $cartItems = session()->get('cart', []);
-        $subtotal = collect($cartItems)->sum(function ($item) {
-            return $item['price'] * $item['quantity'];
-        });
+        $subtotal  = collect($cartItems)->sum(fn($i) => $i['price'] * $i['quantity']);
 
-        // Ambil informasi stok produk
         foreach ($cartItems as &$item) {
-            $product = Product::find($item['id']);
-            $item['stock'] = $product ? $product->stock : 0;
+            $product      = Product::find($item['id']);
+            $item['stock']= $product ? $product->stock : 0;
         }
 
-        // Kirim data cart, subtotal, dan stok ke view checkout
         return view('checkout', compact('cartItems', 'subtotal'));
     }
 
+    // Update quantity di cart
     public function updateCartQuantity(Request $request, $id, $action)
     {
-        // Get cart from session
         $cart = Session::get('cart', []);
-
-        // Check if the product exists in the cart
         if (isset($cart[$id])) {
-            // Increase or decrease quantity based on action
+            $product = Product::find($id);
+            $qty     = $cart[$id]['quantity'];
+
             if ($action === 'increase') {
+                if ($qty + 1 > $product->stock) {
+                    return redirect()->back()
+                        ->with('error', "Cannot exceed stock of {$product->stock} for “{$product->name}”.");
+                }
                 $cart[$id]['quantity']++;
-            } elseif ($action === 'decrease' && $cart[$id]['quantity'] > 1) {
+            }
+            elseif ($action === 'decrease' && $qty > 1) {
                 $cart[$id]['quantity']--;
             }
 
-            // Update session cart
             Session::put('cart', $cart);
         }
 
         return redirect()->back()->with('success', 'Cart quantity updated successfully!');
     }
 
-
-
     // Hapus produk dari cart
     public function removeCart($id)
     {
-        // Ambil cart dari session
         $cart = session()->get('cart', []);
-
-        // Cek jika produk ada di cart
         if (isset($cart[$id])) {
-            unset($cart[$id]); // Hapus produk dari cart
-            session()->put('cart', $cart); // Simpan kembali cart ke session
+            unset($cart[$id]);
+            session()->put('cart', $cart);
         }
-
         return redirect()->back()->with('success', 'Product removed from cart successfully!');
     }
 }

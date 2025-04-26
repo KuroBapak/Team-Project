@@ -126,6 +126,7 @@
                         <th>Total Purchase</th>
                         <th>Payment Type</th>
                         <th>Payment Status</th>
+                        <th>Verification Code</th>
                         <th>Checkout Date & Time</th>
                         <th>Ordered Products</th> <!-- New column for products -->
                         <th>Actions</th>
@@ -139,6 +140,7 @@
                         <td>{{ $order->total_amount }}</td>
                         <td>{{ $order->payment_type }}</td>
                         <td>{{ $order->payment_status }}</td>
+                        <td>{{ $order->verification_code }}</td>
                         <td>{{ \Carbon\Carbon::parse($order->created_at)->format('d-m-Y H:i:s') }}</td>
                         <td>
                             <ul>
@@ -149,10 +151,17 @@
                         </td>
                         <td>
                             <!-- Button to update payment status -->
-                            <form action="{{ route('admin.updatePaymentStatus', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure the items are paid?');">
+                            <form action="{{ route('admin.updatePaymentStatus', $order->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('PUT')
-                                <button type="submit" class="btn btn-success">Mark as Done</button>
+
+                                <div class="input-group">
+                                    <input type="text" name="code" class="form-control form-control-sm"
+                                           placeholder="Enter code…" required>
+                                    <button class="btn btn-success btn-sm" type="submit">
+                                        Mark as Done
+                                    </button>
+                                </div>
                             </form>
 
                             <!-- Button to delete order -->

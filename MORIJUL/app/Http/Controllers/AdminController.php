@@ -15,14 +15,26 @@ class AdminController extends Controller
         return view('admin.login'); // Tampilan form login
     }
 
-    public function updatePaymentStatus($id)
+    public function updatePaymentStatus(Request $request, $id)
     {
         $order = Order::findOrFail($id);
-        $order->payment_status = 'done'; // Update status to 'done'
+
+        $request->validate([
+            'code' => 'required|string',
+        ]);
+
+        if ($request->code !== $order->verification_code) {
+            return back()->withErrors(['code' => 'Invalid verification code.']);
+        }
+
+        $order->payment_status = 'done';
         $order->save();
 
-        return redirect()->route('admin.dashboard')->with('status', 'Payment status updated!');
+        return redirect()
+               ->route('admin.dashboard')
+               ->with('status', 'Payment status updated!');
     }
+
 
     // Method to delete an order
     public function deleteOrder($id)

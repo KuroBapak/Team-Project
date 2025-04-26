@@ -312,6 +312,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
+     * @property string $verification_code
      * @property float|null $total_amount
      * @property string $payment_status
      * @property string $payment_type
@@ -326,6 +327,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order wherePaymentType($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order wherePaymentStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereTotalAmount($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereVerificationCode($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order newModelQuery()
