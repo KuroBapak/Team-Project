@@ -9,7 +9,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['buyer_name', 'room_number', 'payment_type', 'status', 'total_amount'];
+    protected $fillable = ['buyer_name', 'room_number', 'payment_type', 'payment_status', 'total_amount'];
 
     // Relasi dengan OrderItem
     public function items()
