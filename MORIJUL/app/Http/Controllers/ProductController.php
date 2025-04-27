@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Chats;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
@@ -15,10 +16,21 @@ class ProductController extends Controller
         return view('admin.products.index', compact('products'));
     }
 
-    public function guest()
+    public function guest(Request $request)
     {
         $products = Product::all();
-        return view('products.index', compact('products'));
+            // 1. Pull the chat code (if the user has already entered one)
+    $code = $request->session()->get('chat_code');
+
+    // 2. If we have a code, load its messages; otherwise an empty collection
+    $chats = $code
+        ? Chats::where('unique_code', $code)
+               ->orderBy('created_at')
+               ->get()
+        : collect();
+
+    // 3. Pass both into the Blade
+    return view('products.index', compact('products','code','chats'));
     }
 
     // Menyimpan produk baru

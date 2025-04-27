@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin; // Pastikan model Admin sudah ada
+use App\Models\Chats;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -47,9 +48,14 @@ class AdminController extends Controller
 
     public function dashboard()
     {
-        $orders = Order::with('items.product')->get(); // Load order items with products
+        $orders = Order::with('items.product')->get();
 
-        return view('admin.products.dashboard', compact('orders'));
+        // Get all distinct chat codes
+        $codes = Chats::distinct()
+                      ->orderBy('unique_code')
+                      ->pluck('unique_code');
+
+        return view('admin.products.dashboard', compact('orders','codes'));
     }
 
 
@@ -70,6 +76,7 @@ class AdminController extends Controller
             session([
                 'user_id' => $user->id,
                 'role'    => $user->role,
+                'admin_username'=> $user->username,
             ]);
 
             // 5. Redirect based on role

@@ -15,14 +15,14 @@ class AdminSeeder extends Seeder
     {
         // Create a default admin user
         Admin::create([
-            'username' => 'admin',
+            'username' => 'moreno',
             'password' => Hash::make('admin'),
             'role'     => 'admin',
         ]);
 
         // (Optional) Create a sample delivery user
         Admin::create([
-            'username' => 'delivery',
+            'username' => 'panjul',
             'password' => Hash::make('delivery'),
             'role'     => 'delivery',
         ]);
