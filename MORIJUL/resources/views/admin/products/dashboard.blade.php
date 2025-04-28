@@ -46,7 +46,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            flex-grow: 1; /* Membuat container utama fleksibel agar mengisi ruang */
+             /* flex-grow: 1; Membuat container utama fleksibel agar mengisi ruang */
         }
 
         .table {
@@ -132,7 +132,7 @@
                         <th>Total Purchase</th>
                         <th>Payment Type</th>
                         <th>Payment Status</th>
-                        <th>Verification Code</th>
+                        <th>Order Code</th>
                         <th>Checkout Date & Time</th>
                         <th>Ordered Products</th> <!-- New column for products -->
                         <th>Actions</th>
@@ -171,7 +171,7 @@
                             </form>
 
                             <!-- Button to delete order -->
-                            <form action="{{ route('admin.deleteOrder', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this product?');">
+                            <form action="{{ route('admin.deleteOrder', $order->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this order?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -203,12 +203,12 @@
 <!-- Admin Chat Modal -->
 <div class="modal fade" id="adminChatModal" tabindex="-1" aria-labelledby="adminChatModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
-      <div class="modal-content bg-light">
+      <div class="modal-content text-white" style="background:#222;">
         <div class="modal-header">
             <h5 class="modal-title" id="adminChatModalLabel">
                 Chat with: <strong id="chat-with-label">—</strong>
               </h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           {{-- List of user codes --}}
@@ -221,15 +221,15 @@
                   <li class="list-group-item list-group-item-action"
                       data-code="{{ $code }}"
                       data-name="{{ $name }}">
-                    {{ $code }}
+                    {{ $code }} ({{ $name }})
                   </li>
                 @endforeach
             </ul>
             </div>
             <div class="col-md-8">
               {{-- Chat window --}}
-              <div id="admin-chat-window" style="height:400px; overflow-y:auto; background:#f8f9fa; padding:15px;">
-                <p class="text-muted">Select a code to view messages…</p>
+              <div id="admin-chat-window" style="height:400px; overflow-y:auto; background:#222; padding:15px;">
+                <p class="text-white">Select a code to view messages…</p>
               </div>
               <form id="admin-chat-form" class="d-none mt-3">
                 @csrf

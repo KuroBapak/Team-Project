@@ -40,10 +40,22 @@ class AdminController extends Controller
     // Method to delete an order
     public function deleteOrder($id)
     {
+        // 1) Find the order (will 404 if not found)
         $order = Order::findOrFail($id);
+
+        // 2) Grab its verification code before deleting
+        $code = $order->verification_code;
+
+        // 3) Delete the order itself
         $order->delete();
 
-        return redirect()->route('admin.dashboard')->with('status', 'Order deleted successfully!');
+        // 4) Purge all chats tied to that code
+        Chats::where('unique_code', $code)->delete();
+
+        // 5) Redirect back
+        return redirect()
+               ->route('admin.dashboard')
+               ->with('status', 'Order and its chat history deleted successfully!');
     }
 
     public function dashboard()
