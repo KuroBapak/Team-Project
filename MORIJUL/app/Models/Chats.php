@@ -9,11 +9,11 @@ class Chats extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['unique_code','sender','message'];
+    protected $fillable = ['order_code','sender','message'];
 
     // If you want eager-loading:
     public function order()
     {
-        return $this->belongsTo(Order::class);
+        return $this->belongsTo(Order::class, 'order_code', 'order_code');
     }
 }

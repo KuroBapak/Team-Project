@@ -316,11 +316,11 @@ namespace App\Models {
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string $message
      * @property mixed $sender
-     * @property string $unique_code
+     * @property string $order_code
      * @property int $id
      * @property-read \App\Models\Order $order
      * @method static \Illuminate\Database\Eloquent\Builder<Chats>|Chats whereId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Chats>|Chats whereUniqueCode($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Chats>|Chats whereOrderCode($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Chats>|Chats whereSender($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Chats>|Chats whereMessage($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Chats>|Chats whereCreatedAt($value)
@@ -622,7 +622,7 @@ namespace App\Models {
      *
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
-     * @property string $verification_code
+     * @property string $order_code
      * @property float|null $total_amount
      * @property string $payment_status
      * @property string $payment_type
@@ -631,13 +631,15 @@ namespace App\Models {
      * @property int $id
      * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\OrderItem> $items
      * @property-read int|null $items_count
+     * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Chats> $chats
+     * @property-read int|null $chats_count
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereBuyerName($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereRoomNumber($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order wherePaymentType($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order wherePaymentStatus($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereTotalAmount($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereVerificationCode($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereOrderCode($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order whereUpdatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Order>|Order newModelQuery()

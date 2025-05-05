@@ -48,7 +48,7 @@ class OrderController extends Controller
             'payment_type'     => $request->payment_type,
             'payment_status'   => 'pending',
             'total_amount'     => collect($cartItems)->sum(fn($i) => $i['price'] * $i['quantity']),
-            'verification_code'=> $verificationCode,
+            'order_code'=> $verificationCode,
         ]);
 
         // 3️⃣ Simpan order items & kurangi stok
@@ -73,7 +73,7 @@ class OrderController extends Controller
     {
         $order      = Order::with('items')->findOrFail($id);
         $totalItems = $order->items->sum('quantity');
-        $code       = $order->verification_code;
+        $code       = $order->order_code;
 
         return view('code', compact('order', 'totalItems', 'code'));
     }

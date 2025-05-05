@@ -14,6 +14,7 @@ class CreateProductsTable extends Migration
             $table->string('image');
             $table->decimal('price', 15, 0);
             $table->enum('size', ['kecil', 'sedang', 'besar']);
+            $table->integer('stock')->default(0);
             $table->timestamps();
         });
 

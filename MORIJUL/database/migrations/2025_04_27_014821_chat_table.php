@@ -10,16 +10,25 @@ return new class extends Migration
     {
         Schema::create('chats', function (Blueprint $table) {
             $table->id();
-            $table->string('unique_code')->index();
-            $table->enum('sender',['user','admin','delivery']);
+            $table->string('order_code');                 // “pinjam” dari orders
+            $table->enum('sender', ['user', 'admin', 'delivery']);
             $table->text('message');
             $table->timestamps();
-        });
 
+            // Relasi:
+            $table->foreign('order_code')
+                  ->references('order_code')
+                  ->on('orders')
+                  ->onDelete('cascade');
+        });
     }
 
     public function down(): void
     {
+        Schema::table('chats', function (Blueprint $table) {
+            $table->dropForeign(['order_code']);
+        });
         Schema::dropIfExists('chats');
     }
 };
+

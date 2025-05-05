@@ -24,8 +24,8 @@ class AdminController extends Controller
             'code' => 'required|string',
         ]);
 
-        if ($request->code !== $order->verification_code) {
-            return back()->withErrors(['code' => 'Invalid verification code.']);
+        if ($request->code !== $order->order_code) {
+            return back()->withErrors(['code' => 'Invalid order code.']);
         }
 
         $order->payment_status = 'done';
@@ -43,14 +43,14 @@ class AdminController extends Controller
         // 1) Find the order (will 404 if not found)
         $order = Order::findOrFail($id);
 
-        // 2) Grab its verification code before deleting
-        $code = $order->verification_code;
+        // 2) Grab its order code before deleting
+        $code = $order->order_code;
 
         // 3) Delete the order itself
         $order->delete();
 
         // 4) Purge all chats tied to that code
-        Chats::where('unique_code', $code)->delete();
+        Chats::where('order_code', $code)->delete();
 
         // 5) Redirect back
         return redirect()
@@ -64,8 +64,8 @@ class AdminController extends Controller
 
         // Get all distinct chat codes
         $codes = Chats::distinct()
-                      ->orderBy('unique_code')
-                      ->pluck('unique_code');
+                      ->orderBy('order_code')
+                      ->pluck('order_code');
 
         return view('admin.products.dashboard', compact('orders','codes'));
     }

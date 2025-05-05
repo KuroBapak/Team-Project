@@ -13,8 +13,9 @@ class CreateOrdersTable extends Migration
             $table->string('buyer_name');
             $table->string('room_number');
             $table->string('payment_type');
-            $table->string('payment_status')->default('pending'); // Pastikan ada default value
-            $table->decimal('total_amount', 10, 2)->nullable(); // Menambahkan kolom total_amount jika diperlukan
+            $table->string('payment_status')->default('pending');
+            $table->decimal('total_amount', 10, 2)->nullable();
+            $table->string('order_code')->unique();
             $table->timestamps();
         });
     }

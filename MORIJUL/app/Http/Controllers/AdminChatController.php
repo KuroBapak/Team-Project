@@ -13,10 +13,10 @@ class AdminChatController extends Controller
         $orders = Order::with('items.product')->get();
 
         // pluck returns a Collection<string>
-        $codes = Chats::select('unique_code')
+        $codes = Chats::select('order_code')
                       ->distinct()
-                      ->orderBy('unique_code')
-                      ->pluck('unique_code');
+                      ->orderBy('order_code')
+                      ->pluck('order_code');
 
         return view('admin.products.dashboard', compact('orders','codes'));
     }
@@ -24,7 +24,7 @@ class AdminChatController extends Controller
     public function fetch($code)
     {
         return response()->json(
-            Chats::where('unique_code', $code)
+            Chats::where('order_code', $code)
                  ->orderBy('created_at')
                  ->get()
         );
@@ -38,7 +38,7 @@ class AdminChatController extends Controller
         ]);
 
         $chat = Chats::create([
-            'unique_code' => $code,
+            'order_code' => $code,
             'sender'      => 'admin',
             'message'     => $data['message'],
         ]);

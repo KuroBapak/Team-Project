@@ -307,10 +307,10 @@
                             <form method="POST" action="{{ route('chat.start') }}">
                             @csrf
                             <div class="mb-3">
-                                <label for="unique_code" class="form-label">Order Code</label>
+                                <label for="order_code" class="form-label">Order Code</label>
                                 <input type="text"
-                                    name="unique_code"
-                                    id="unique_code"
+                                    name="order_code"
+                                    id="order_code"
                                     class="form-control"
                                     required>
                             </div>

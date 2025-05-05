@@ -11,13 +11,13 @@ class ChatController extends Controller
     public function start(Request $request)
     {
         $data = $request->validate([
-            'unique_code' => 'required|string|exists:orders,verification_code',
+            'order_code' => 'required|string|exists:orders,order_code',
         ]);
 
-        $request->session()->put('chat_code', $data['unique_code']);
+        $request->session()->put('chat_code', $data['order_code']);
 
         // pull buyer name
-        $name = Order::where('verification_code', $data['unique_code'])
+        $name = Order::where('order_code', $data['order_code'])
                      ->value('buyer_name');
         $request->session()->put('chat_name', $name);
 
@@ -39,7 +39,7 @@ public function send(Request $request)
     ]);
 
     $chat = Chats::create([
-        'unique_code' => $request->session()->get('chat_code'),
+        'order_code' => $request->session()->get('chat_code'),
         'sender'      => 'user',
         'message'     => $data['message'],
     ]);
@@ -58,7 +58,7 @@ public function send(Request $request)
     {
         $code = $request->session()->get('chat_code');
         return response()->json(
-            Chats::where('unique_code',$code)
+            Chats::where('order_code',$code)
                  ->orderBy('created_at')
                  ->get()
         );

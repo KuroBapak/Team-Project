@@ -24,7 +24,7 @@ class ProductController extends Controller
 
     // 2. If we have a code, load its messages; otherwise an empty collection
     $chats = $code
-        ? Chats::where('unique_code', $code)
+        ? Chats::where('order_code', $code)
                ->orderBy('created_at')
                ->get()
         : collect();

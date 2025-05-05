@@ -146,7 +146,7 @@
                         <td>{{ $order->total_amount }}</td>
                         <td>{{ $order->payment_type }}</td>
                         <td>{{ $order->payment_status }}</td>
-                        <td>{{ $order->verification_code }}</td>
+                        <td>{{ $order->order_code }}</td>
                         <td>{{ \Carbon\Carbon::parse($order->created_at)->format('d-m-Y H:i:s') }}</td>
                         <td>
                             <ul>
@@ -217,7 +217,7 @@
             <!-- inside the adminChatModal -->
             <ul class="list-group" id="code-list">
                 @foreach($codes as $code)
-                  @php $name = \App\Models\Order::where('verification_code',$code)->value('buyer_name'); @endphp
+                  @php $name = \App\Models\Order::where('order_code',$code)->value('buyer_name'); @endphp
                   <li class="list-group-item list-group-item-action"
                       data-code="{{ $code }}"
                       data-name="{{ $name }}">
