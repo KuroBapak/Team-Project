@@ -40,7 +40,7 @@ class StoreTest extends TestCase
 
     public function testReadsAnEmptyArrayWithReadWhenNothingCachedAtKey()
     {
-        $this->assertEmpty($this->getStoreMetadata('/nothing'));
+        $this->assertSame([], $this->getStoreMetadata('/nothing'));
     }
 
     public function testUnlockFileThatDoesExist()
@@ -65,7 +65,7 @@ class StoreTest extends TestCase
         $this->assertNotEmpty($metadata);
 
         $this->assertTrue($this->store->purge('/foo'));
-        $this->assertEmpty($this->getStoreMetadata($request));
+        $this->assertSame([], $this->getStoreMetadata($request));
 
         // cached content should be kept after purging
         $path = $this->store->getPath($metadata[0][1]['x-content-digest'][0]);
@@ -291,7 +291,7 @@ class StoreTest extends TestCase
         $this->assertNotEmpty($this->getStoreMetadata($request));
 
         $this->assertTrue($this->store->purge('https://example.com/foo'));
-        $this->assertEmpty($this->getStoreMetadata($request));
+        $this->assertSame([], $this->getStoreMetadata($request));
     }
 
     public function testPurgeHttpAndHttps()
@@ -306,8 +306,8 @@ class StoreTest extends TestCase
         $this->assertNotEmpty($this->getStoreMetadata($requestHttps));
 
         $this->assertTrue($this->store->purge('http://example.com/foo'));
-        $this->assertEmpty($this->getStoreMetadata($requestHttp));
-        $this->assertEmpty($this->getStoreMetadata($requestHttps));
+        $this->assertSame([], $this->getStoreMetadata($requestHttp));
+        $this->assertSame([], $this->getStoreMetadata($requestHttps));
     }
 
     public function testDoesNotStorePrivateHeaders()
@@ -346,6 +346,127 @@ class StoreTest extends TestCase
         $this->store->write($request, $response);
         $response = $this->store->lookup($request);
         $this->assertSame($content, $response->getContent());
+    }
+
+    /**
+     * Basic case when the second header has a different value.
+     * Both responses should be cached
+     */
+    public function testWriteWithMultipleVaryAndCachedAllResponse()
+    {
+        $req1 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_BAR' => 'bar']);
+        $content = str_repeat('a', 24).'b'.str_repeat('a', 24);
+        $res1 = new Response($content, 200, ['vary' => ['Foo', 'Bar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req1, $res1);
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content, $responseLook->getContent());
+
+        $req2 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_BAR' => 'foobar']);
+        $content2 = str_repeat('b', 24).'a'.str_repeat('b', 24);
+        $res2 = new Response($content2, 200, ['vary' => ['Foo', 'Bar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req2, $res2);
+
+        $responseLook = $this->store->lookup($req2);
+        $this->assertSame($content2, $responseLook->getContent());
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content, $responseLook->getContent());
+    }
+
+    /**
+     * Basic case when the second header has the same value on both requests.
+     * The last response should be cached
+     */
+    public function testWriteWithMultipleVaryAndCachedLastResponse()
+    {
+        $req1 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_BAR' => 'bar']);
+        $content = str_repeat('a', 24).'b'.str_repeat('a', 24);
+        $res1 = new Response($content, 200, ['vary' => ['Foo', 'Bar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req1, $res1);
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content, $responseLook->getContent());
+
+        $req2 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_BAR' => 'bar']);
+        $content2 = str_repeat('b', 24).'a'.str_repeat('b', 24);
+        $res2 = new Response($content2, 200, ['vary' => ['Foo', 'Bar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req2, $res2);
+
+        $responseLook = $this->store->lookup($req2);
+        $this->assertSame($content2, $responseLook->getContent());
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content2, $responseLook->getContent());
+    }
+
+    /**
+     * Case when a vary value has been removed.
+     * Both responses should be cached
+     */
+    public function testWriteWithChangingVary()
+    {
+        $req1 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_BAR' => 'bar']);
+        $content = str_repeat('a', 24).'b'.str_repeat('a', 24);
+        $res1 = new Response($content, 200, ['vary' => ['Foo', 'bar', 'foobar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req1, $res1);
+
+        $req2 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_FOOBAR' => 'bar']);
+        $content2 = str_repeat('b', 24).'a'.str_repeat('b', 24);
+        $res2 = new Response($content2, 200, ['vary' => ['Foo', 'foobar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req2, $res2);
+
+        $responseLook = $this->store->lookup($req2);
+        $this->assertSame($content2, $responseLook->getContent());
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content, $responseLook->getContent());
+    }
+
+    /**
+     * Case when a vary value has been removed and headers of the new vary list are the same.
+     * The last response should be cached
+     */
+    public function testWriteWithRemoveVaryAndAllHeadersOnTheList()
+    {
+        $req1 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_FOOBAR' => 'bar',]);
+        $content = str_repeat('a', 24).'b'.str_repeat('a', 24);
+        $res1 = new Response($content, 200, ['vary' => ['Foo', 'bar', 'foobar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req1, $res1);
+
+        $req2 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_FOOBAR' => 'bar']);
+        $content2 = str_repeat('b', 24).'a'.str_repeat('b', 24);
+        $res2 = new Response($content2, 200, ['vary' => ['Foo', 'foobar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req2, $res2);
+
+        $responseLook = $this->store->lookup($req2);
+        $this->assertSame($content2, $responseLook->getContent());
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content2, $responseLook->getContent());
+    }
+
+    /**
+     * Case when a vary value has been added and headers of the new vary list are the same.
+     * The last response should be cached
+     */
+    public function testWriteWithAddingVaryAndAllHeadersOnTheList()
+    {
+        $req1 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_FOOBAR' => 'bar']);
+        $content = str_repeat('a', 24).'b'.str_repeat('a', 24);
+        $res1 = new Response($content, 200, ['vary' => ['Foo', 'foobar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req1, $res1);
+
+        $req2 = Request::create('/foo', 'get', [], [], [], ['HTTP_FOO' => 'foo', 'HTTP_BAR' => 'foobar', 'HTTP_FOOBAR' => 'bar']);
+        $content2 = str_repeat('b', 24).'a'.str_repeat('b', 24);
+        $res2 = new Response($content2, 200, ['vary' => ['Foo', 'bar', 'foobar'], 'X-Body-Eval' => 'SSI']);
+        $this->store->write($req2, $res2);
+
+        $responseLook = $this->store->lookup($req2);
+        $this->assertSame($content2, $responseLook->getContent());
+
+        $responseLook = $this->store->lookup($req1);
+        $this->assertSame($content, $responseLook->getContent());
     }
 
     protected function storeSimpleEntry($path = null, $headers = [])

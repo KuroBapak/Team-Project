@@ -3,7 +3,10 @@
          xsi:noNamespaceSchemaLocation="phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          cacheDirectory=".phpunit.cache"
+         shortenArraysForExportThreshold="10"
          beStrictAboutOutputDuringTests="true"
+         displayDetailsOnPhpunitDeprecations="true"
+         failOnPhpunitDeprecation="true"
          failOnRisky="true"
          failOnWarning="true"
          colors="true">
@@ -14,6 +17,7 @@
 
         <testsuite name="end-to-end">
             <directory suffix=".phpt">tests/end-to-end/baseline</directory>
+            <directory suffix=".phpt">tests/end-to-end/check-php-configuration</directory>
             <directory suffix=".phpt">tests/end-to-end/cli</directory>
             <directory suffix=".phpt">tests/end-to-end/data-provider</directory>
             <directory suffix=".phpt">tests/end-to-end/deprecation-trigger</directory>
@@ -44,7 +48,7 @@
         </testsuite>
     </testsuites>
 
-    <source>
+    <source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
             <directory>src</directory>
         </include>

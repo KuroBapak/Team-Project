@@ -37,6 +37,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Console\Output\Output;
@@ -196,8 +197,10 @@ class ApplicationTest extends TestCase
 
     public function testRegisterAmbiguous()
     {
-        $code = function (InputInterface $input, OutputInterface $output) {
+        $code = function (InputInterface $input, OutputInterface $output): int {
             $output->writeln('It works!');
+
+            return 0;
         };
 
         $application = new Application();
@@ -291,7 +294,7 @@ class ApplicationTest extends TestCase
         $tester = new ApplicationTester($application);
         $tester->run(['-h' => true, '-q' => true], ['decorated' => false]);
 
-        $this->assertEmpty($tester->getDisplay(true));
+        $this->assertSame('', $tester->getDisplay(true));
     }
 
     public function testGetInvalidCommand()
@@ -829,7 +832,7 @@ class ApplicationTest extends TestCase
 
         try {
             $tester->run(['command' => 'boom']);
-            $this->fail('The exception is not catched.');
+            $this->fail('The exception is not caught.');
         } catch (\Throwable $e) {
             $this->assertInstanceOf(\Error::class, $e);
             $this->assertSame('This is an error.', $e->getMessage());
@@ -1275,7 +1278,9 @@ class ApplicationTest extends TestCase
             ->register('foo')
             ->setAliases(['f'])
             ->setDefinition([new InputOption('survey', 'e', InputOption::VALUE_REQUIRED, 'My option with a shortcut.')])
-            ->setCode(function (InputInterface $input, OutputInterface $output) {})
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                return 0;
+            })
         ;
 
         $input = new ArrayInput(['command' => 'foo']);
@@ -1298,7 +1303,9 @@ class ApplicationTest extends TestCase
         $application
             ->register('foo')
             ->setDefinition([$def])
-            ->setCode(function (InputInterface $input, OutputInterface $output) {})
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                return 0;
+            })
         ;
 
         $input = new ArrayInput(['command' => 'foo']);
@@ -1435,8 +1442,10 @@ class ApplicationTest extends TestCase
         $application->setAutoExit(false);
         $application->setDispatcher($this->getDispatcher());
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -1491,8 +1500,10 @@ class ApplicationTest extends TestCase
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -1559,8 +1570,10 @@ class ApplicationTest extends TestCase
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -1671,8 +1684,10 @@ class ApplicationTest extends TestCase
         $application->setDispatcher($this->getDispatcher(true));
         $application->setAutoExit(false);
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -1698,8 +1713,10 @@ class ApplicationTest extends TestCase
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -1728,8 +1745,10 @@ class ApplicationTest extends TestCase
         $application->setDispatcher($dispatcher);
         $application->setAutoExit(false);
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -1858,12 +1877,12 @@ class ApplicationTest extends TestCase
             'foo:bar' => function () use (&$loaded) {
                 $loaded['foo:bar'] = true;
 
-                return (new Command('foo:bar'))->setCode(function () {});
+                return (new Command('foo:bar'))->setCode(function (): int { return 0; });
             },
             'foo' => function () use (&$loaded) {
                 $loaded['foo'] = true;
 
-                return (new Command('foo'))->setCode(function () {});
+                return (new Command('foo'))->setCode(function (): int { return 0; });
             },
         ]));
 
@@ -1934,8 +1953,10 @@ class ApplicationTest extends TestCase
         $application->setAutoExit(false);
         $application->setCatchExceptions(false);
 
-        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output) {
+        $application->register('foo')->setCode(function (InputInterface $input, OutputInterface $output): int {
             $output->write('foo.');
+
+            return 0;
         });
 
         $tester = new ApplicationTester($application);
@@ -2238,6 +2259,41 @@ class ApplicationTest extends TestCase
     /**
      * @requires extension pcntl
      */
+    public function testSignalableInvokableCommand()
+    {
+        $command = new Command();
+        $command->setName('signal-invokable');
+        $command->setCode($invokable = new class implements SignalableCommandInterface {
+            use SignalableInvokableCommandTrait;
+        });
+
+        $application = $this->createSignalableApplication($command, null);
+        $application->setSignalsToDispatchEvent(\SIGUSR1);
+
+        $this->assertSame(1, $application->run(new ArrayInput(['signal-invokable'])));
+        $this->assertTrue($invokable->signaled);
+    }
+
+    /**
+     * @requires extension pcntl
+     */
+    public function testSignalableInvokableCommandThatExtendsBaseCommand()
+    {
+        $command = new class extends Command implements SignalableCommandInterface {
+            use SignalableInvokableCommandTrait;
+        };
+        $command->setName('signal-invokable');
+
+        $application = $this->createSignalableApplication($command, null);
+        $application->setSignalsToDispatchEvent(\SIGUSR1);
+
+        $this->assertSame(1, $application->run(new ArrayInput(['signal-invokable'])));
+        $this->assertTrue($command->signaled);
+    }
+
+    /**
+     * @requires extension pcntl
+     */
     public function testAlarmSubscriberNotCalledByDefault()
     {
         $command = new BaseSignableCommand(false);
@@ -2404,9 +2460,105 @@ class ApplicationTest extends TestCase
         if ($dispatcher) {
             $application->setDispatcher($dispatcher);
         }
-        $application->add(new LazyCommand($command::getDefaultName(), [], '', false, fn () => $command, true));
+        $application->add(new LazyCommand($command->getName(), [], '', false, fn () => $command, true));
 
         return $application;
+    }
+
+    public function testShellVerbosityIsRestoredAfterCommandExecutionWithInitialValue()
+    {
+        // Set initial SHELL_VERBOSITY
+        putenv('SHELL_VERBOSITY=-2');
+        $_ENV['SHELL_VERBOSITY'] = '-2';
+        $_SERVER['SHELL_VERBOSITY'] = '-2';
+
+        $application = new Application();
+        $application->setAutoExit(false);
+        $application->register('foo')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $output->write('SHELL_VERBOSITY: '.$_SERVER['SHELL_VERBOSITY']);
+
+                return 0;
+            });
+
+        $input = new ArrayInput(['command' => 'foo', '--verbose' => 3]);
+        $output = new BufferedOutput();
+
+        $application->run($input, $output);
+
+        $this->assertSame('SHELL_VERBOSITY: 3', $output->fetch());
+        $this->assertSame('-2', getenv('SHELL_VERBOSITY'));
+        $this->assertSame('-2', $_ENV['SHELL_VERBOSITY']);
+        $this->assertSame('-2', $_SERVER['SHELL_VERBOSITY']);
+
+        // Clean up for other tests
+        putenv('SHELL_VERBOSITY');
+        unset($_ENV['SHELL_VERBOSITY']);
+        unset($_SERVER['SHELL_VERBOSITY']);
+    }
+
+    public function testShellVerbosityIsRemovedAfterCommandExecutionWhenNotSetInitially()
+    {
+        // Ensure SHELL_VERBOSITY is not set initially
+        putenv('SHELL_VERBOSITY');
+        unset($_ENV['SHELL_VERBOSITY']);
+        unset($_SERVER['SHELL_VERBOSITY']);
+
+        $application = new Application();
+        $application->setAutoExit(false);
+        $application->register('foo')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $output->write('SHELL_VERBOSITY: '.$_SERVER['SHELL_VERBOSITY']);
+
+                return 0;
+            });
+
+        $input = new ArrayInput(['command' => 'foo', '--verbose' => 3]);
+        $output = new BufferedOutput();
+
+        $application->run($input, $output);
+
+        $this->assertSame('SHELL_VERBOSITY: 3', $output->fetch());
+        $this->assertFalse(getenv('SHELL_VERBOSITY'));
+        $this->assertArrayNotHasKey('SHELL_VERBOSITY', $_ENV);
+        $this->assertArrayNotHasKey('SHELL_VERBOSITY', $_SERVER);
+    }
+
+    public function testShellVerbosityDoesNotLeakBetweenCommandExecutions()
+    {
+        // Ensure no initial SHELL_VERBOSITY
+        putenv('SHELL_VERBOSITY');
+        unset($_ENV['SHELL_VERBOSITY']);
+        unset($_SERVER['SHELL_VERBOSITY']);
+
+        $application = new Application();
+        $application->setAutoExit(false);
+        $application->register('verbose-cmd')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $output->write('SHELL_VERBOSITY: '.$_SERVER['SHELL_VERBOSITY']);
+
+                return 0;
+            });
+        $application->register('normal-cmd')
+            ->setCode(function (InputInterface $input, OutputInterface $output): int {
+                $output->write('SHELL_VERBOSITY: '.$_SERVER['SHELL_VERBOSITY']);
+
+                return 0;
+            });
+
+        $output = new BufferedOutput();
+
+        $application->run(new ArrayInput(['command' => 'verbose-cmd', '--verbose' => true]), $output);
+
+        $this->assertSame('SHELL_VERBOSITY: 1', $output->fetch(), 'SHELL_VERBOSITY should be set to 1 for verbose command');
+        $this->assertFalse(getenv('SHELL_VERBOSITY'), 'SHELL_VERBOSITY should not be set after first command');
+
+        $application->run(new ArrayInput(['command' => 'normal-cmd']), $output);
+
+        $this->assertSame('SHELL_VERBOSITY: 0', $output->fetch(), 'SHELL_VERBOSITY should not leak to second command');
+        $this->assertFalse(getenv('SHELL_VERBOSITY'), 'SHELL_VERBOSITY should not leak to second command');
+        $this->assertArrayNotHasKey('SHELL_VERBOSITY', $_ENV);
+        $this->assertArrayNotHasKey('SHELL_VERBOSITY', $_SERVER);
     }
 }
 
@@ -2494,7 +2646,7 @@ class BaseSignableCommand extends Command
 }
 
 #[AsCommand(name: 'signal')]
-class SignableCommand extends BaseSignableCommand implements SignalableCommandInterface
+class SignableCommand extends BaseSignableCommand
 {
     public function getSubscribedSignals(): array
     {
@@ -2511,7 +2663,7 @@ class SignableCommand extends BaseSignableCommand implements SignalableCommandIn
 }
 
 #[AsCommand(name: 'signal')]
-class TerminatableCommand extends BaseSignableCommand implements SignalableCommandInterface
+class TerminatableCommand extends BaseSignableCommand
 {
     public function getSubscribedSignals(): array
     {
@@ -2528,7 +2680,7 @@ class TerminatableCommand extends BaseSignableCommand implements SignalableComma
 }
 
 #[AsCommand(name: 'signal')]
-class TerminatableWithEventCommand extends Command implements SignalableCommandInterface, EventSubscriberInterface
+class TerminatableWithEventCommand extends Command implements EventSubscriberInterface
 {
     private bool $shouldContinue = true;
     private OutputInterface $output;
@@ -2595,8 +2747,39 @@ class SignalEventSubscriber implements EventSubscriberInterface
     }
 }
 
+trait SignalableInvokableCommandTrait
+{
+    public bool $signaled = false;
+
+    public function __invoke(): int
+    {
+        posix_kill(posix_getpid(), \SIGUSR1);
+
+        for ($i = 0; $i < 1000; ++$i) {
+            usleep(100);
+            if ($this->signaled) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    public function getSubscribedSignals(): array
+    {
+        return SignalRegistry::isSupported() ? [\SIGUSR1] : [];
+    }
+
+    public function handleSignal(int $signal, int|false $previousExitCode = 0): int|false
+    {
+        $this->signaled = true;
+
+        return false;
+    }
+}
+
 #[AsCommand(name: 'alarm')]
-class AlarmableCommand extends BaseSignableCommand implements SignalableCommandInterface
+class AlarmableCommand extends BaseSignableCommand
 {
     public function __construct(private int $alarmInterval)
     {

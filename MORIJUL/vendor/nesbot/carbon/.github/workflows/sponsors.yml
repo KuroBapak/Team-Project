@@ -3,6 +3,7 @@ name: Sponsors
 on:
   schedule:
     - cron: '0 0 15 * *'
+    - cron: '0 0 2 * *'
 
 jobs:
   sponsors:
@@ -12,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: master
 
@@ -46,6 +47,7 @@ jobs:
         run: composer sponsors
 
       - name: Create Pull Request
+        if: github.repository_owner == 'briannesbitt'
         uses: peter-evans/create-pull-request@v7
         with:
           branch: job/update-sponsors

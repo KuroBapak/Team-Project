@@ -104,13 +104,13 @@ class SessionListenerTest extends TestCase
 
         yield 'set_cookiesecure_auto_by_symfony_false_by_php' => [
             'phpSessionOptions' => ['secure' => false],
-            'sessionOptions' => ['cookie_path' => '/test/', 'cookie_httponly' => 'auto', 'cookie_secure' => 'auto', 'cookie_samesite' => Cookie::SAMESITE_LAX],
+            'sessionOptions' => ['cookie_path' => '/test/', 'cookie_httponly' => true, 'cookie_secure' => 'auto', 'cookie_samesite' => Cookie::SAMESITE_LAX],
             'expectedSessionOptions' => ['cookie_path' => '/test/', 'cookie_domain' => '', 'cookie_secure' => false, 'cookie_httponly' => true, 'cookie_samesite' => Cookie::SAMESITE_LAX],
         ];
 
         yield 'set_cookiesecure_auto_by_symfony_true_by_php' => [
             'phpSessionOptions' => ['secure' => true],
-            'sessionOptions' => ['cookie_path' => '/test/', 'cookie_httponly' => 'auto', 'cookie_secure' => 'auto', 'cookie_samesite' => Cookie::SAMESITE_LAX],
+            'sessionOptions' => ['cookie_path' => '/test/', 'cookie_httponly' => true, 'cookie_secure' => 'auto', 'cookie_samesite' => Cookie::SAMESITE_LAX],
             'expectedSessionOptions' => ['cookie_path' => '/test/', 'cookie_domain' => '', 'cookie_secure' => true, 'cookie_httponly' => true, 'cookie_samesite' => Cookie::SAMESITE_LAX],
         ];
 
@@ -896,8 +896,8 @@ class SessionListenerTest extends TestCase
 
         (new SessionListener($container, true))->reset();
 
-        $this->assertEmpty($_SESSION);
-        $this->assertEmpty(session_id());
+        $this->assertSame([], $_SESSION);
+        $this->assertSame('', session_id());
         $this->assertSame(\PHP_SESSION_NONE, session_status());
     }
 
@@ -917,8 +917,8 @@ class SessionListenerTest extends TestCase
 
         (new SessionListener($container, true))->reset();
 
-        $this->assertEmpty($_SESSION);
-        $this->assertEmpty(session_id());
+        $this->assertSame([], $_SESSION);
+        $this->assertSame('', session_id());
         $this->assertSame(\PHP_SESSION_NONE, session_status());
     }
 

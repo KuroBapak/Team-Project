@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\TerminateEvent;
 use Symfony\Component\HttpKernel\HttpCache\Esi;
 use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 use Symfony\Component\HttpKernel\HttpCache\StoreInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
@@ -195,7 +196,7 @@ class HttpCacheTest extends HttpCacheTestCase
         $this->assertHttpKernelIsCalled();
         $this->assertEquals(304, $this->response->getStatusCode());
         $this->assertEquals('', $this->response->headers->get('Content-Type'));
-        $this->assertEmpty($this->response->getContent());
+        $this->assertSame('', $this->response->getContent());
         $this->assertTraceContains('miss');
         $this->assertTraceContains('store');
     }
@@ -209,7 +210,7 @@ class HttpCacheTest extends HttpCacheTestCase
         $this->assertEquals(304, $this->response->getStatusCode());
         $this->assertEquals('', $this->response->headers->get('Content-Type'));
         $this->assertTrue($this->response->headers->has('ETag'));
-        $this->assertEmpty($this->response->getContent());
+        $this->assertSame('', $this->response->getContent());
         $this->assertTraceContains('miss');
         $this->assertTraceContains('store');
     }
@@ -662,6 +663,7 @@ class HttpCacheTest extends HttpCacheTestCase
          */
         sleep(10);
 
+        $this->store = $this->createStore(); // create another store instance that does not hold the current lock
         $this->request('GET', '/');
         $this->assertHttpKernelIsNotCalled();
         $this->assertEquals(200, $this->response->getStatusCode());
@@ -678,6 +680,64 @@ class HttpCacheTest extends HttpCacheTestCase
         $this->assertHttpKernelIsNotCalled();
         $this->assertEquals(503, $this->response->getStatusCode());
         $this->assertEquals('Old response', $this->response->getContent());
+    }
+
+    public function testHitBackendOnlyOnceWhenCacheWasLocked()
+    {
+        // Disable stale-while-revalidate, it circumvents waiting for the lock
+        $this->cacheConfig['stale_while_revalidate'] = 0;
+
+        $this->setNextResponses([
+            [
+                'status' => 200,
+                'body' => 'initial response',
+                'headers' => [
+                    'Cache-Control' => 'public, no-cache',
+                    'Last-Modified' => 'some while ago',
+                ],
+            ],
+            [
+                'status' => 304,
+                'body' => '',
+                'headers' => [
+                    'Cache-Control' => 'public, no-cache',
+                    'Last-Modified' => 'some while ago',
+                ],
+            ],
+            [
+                'status' => 500,
+                'body' => 'The backend should not be called twice during revalidation',
+                'headers' => [],
+            ],
+        ]);
+
+        $this->request('GET', '/'); // warm the cache
+
+        // Use a store that simulates a cache entry being locked upon first attempt
+        $this->store = new class(sys_get_temp_dir().'/http_cache') extends Store {
+            private bool $hasLock = false;
+
+            public function lock(Request $request): bool
+            {
+                $hasLock = $this->hasLock;
+                $this->hasLock = true;
+
+                return $hasLock;
+            }
+
+            public function isLocked(Request $request): bool
+            {
+                return false;
+            }
+        };
+
+        $this->request('GET', '/'); // hit the cache with simulated lock/concurrency block
+
+        $this->assertEquals(200, $this->response->getStatusCode());
+        $this->assertEquals('initial response', $this->response->getContent());
+
+        $traces = $this->cache->getTraces();
+        $this->assertSame(['stale', 'valid', 'store'], current($traces));
     }
 
     public function testHitsCachedResponseWithSMaxAgeDirective()
@@ -1281,7 +1341,7 @@ class HttpCacheTest extends HttpCacheTestCase
 
         $this->request('HEAD', '/', [], [], true);
 
-        $this->assertEmpty($this->response->getContent());
+        $this->assertSame('', $this->response->getContent());
         $this->assertEquals(100, $this->response->getTtl());
     }
 
@@ -1510,7 +1570,7 @@ class HttpCacheTest extends HttpCacheTestCase
 
         // The response has been assembled from expiration and validation based resources
         // This can neither be cached nor revalidated, so it should be private/no cache
-        $this->assertEmpty($this->response->getContent());
+        $this->assertSame('', $this->response->getContent());
         $this->assertNull($this->response->getTtl());
         $this->assertTrue($this->response->headers->hasCacheControlDirective('private'));
         $this->assertTrue($this->response->headers->hasCacheControlDirective('no-cache'));
@@ -1568,7 +1628,7 @@ class HttpCacheTest extends HttpCacheTestCase
         // in decimal number of OCTETs, sent to the recipient or, in the case of the HEAD
         // method, the size of the entity-body that would have been sent had the request
         // been a GET."
-        $this->assertEmpty($this->response->getContent());
+        $this->assertSame('', $this->response->getContent());
         $this->assertEquals(12, $this->response->headers->get('Content-Length'));
     }
 
@@ -1692,7 +1752,7 @@ class HttpCacheTest extends HttpCacheTestCase
         $this->setNextResponses($responses);
 
         $this->request('HEAD', '/', [], [], true);
-        $this->assertEmpty($this->response->getContent());
+        $this->assertSame('', $this->response->getContent());
         $this->assertNull($this->response->getETag());
         $this->assertNull($this->response->getLastModified());
     }

@@ -420,7 +420,7 @@ class RequestPayloadValueResolverTest extends TestCase
 
         try {
             $resolver->onKernelControllerArguments($event);
-            $this->fail(sprintf('Expected "%s" to be thrown.', HttpException::class));
+            $this->fail(\sprintf('Expected "%s" to be thrown.', HttpException::class));
         } catch (HttpException $e) {
             $validationFailedException = $e->getPrevious();
             $this->assertInstanceOf(ValidationFailedException::class, $validationFailedException);
@@ -514,7 +514,7 @@ class RequestPayloadValueResolverTest extends TestCase
 
         try {
             $resolver->onKernelControllerArguments($event);
-            $this->fail(sprintf('Expected "%s" to be thrown.', HttpException::class));
+            $this->fail(\sprintf('Expected "%s" to be thrown.', HttpException::class));
         } catch (HttpException $e) {
             $validationFailedException = $e->getPrevious();
             $this->assertInstanceOf(ValidationFailedException::class, $validationFailedException);
@@ -938,6 +938,27 @@ class RequestPayloadValueResolverTest extends TestCase
         $resolver->onKernelControllerArguments($event);
 
         $this->assertTrue($event->getArguments()[0]->value);
+    }
+
+    public function testConfigKeyForQueryString()
+    {
+        $serializer = new Serializer([new ObjectNormalizer()]);
+        $validator = $this->createMock(ValidatorInterface::class);
+        $resolver = new RequestPayloadValueResolver($serializer, $validator);
+
+        $argument = new ArgumentMetadata('filtered', QueryPayload::class, false, false, null, false, [
+            MapQueryString::class => new MapQueryString(key: 'value'),
+        ]);
+        $request = Request::create('/', Request::METHOD_GET, ['value' => ['page' => 1.0]]);
+
+        $kernel = $this->createMock(HttpKernelInterface::class);
+        $arguments = $resolver->resolve($request, $argument);
+        $event = new ControllerArgumentsEvent($kernel, function () {}, $arguments, $request, HttpKernelInterface::MAIN_REQUEST);
+
+        $resolver->onKernelControllerArguments($event);
+
+        $this->assertInstanceOf(QueryPayload::class, $event->getArguments()[0]);
+        $this->assertSame(1.0, $event->getArguments()[0]->page);
     }
 }
 

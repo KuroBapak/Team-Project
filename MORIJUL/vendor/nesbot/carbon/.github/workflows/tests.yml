@@ -8,7 +8,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu, windows]
-        php: [8.1, 8.2, 8.3, 8.4]
+        php: [8.1, 8.2, 8.3, 8.4, 8.5]
         setup: [lowest, stable]
         include:
           - php: 8.1
@@ -16,15 +16,21 @@ jobs:
             setup: stable
             classmap-authoritative: true
 
-          - php: 8.2
-            os: ubuntu
-            setup: stable
-            coverage: true
-
           - php: 8.3
             os: ubuntu
             setup: stable
             phpunit: 11
+            coverage: true
+
+          - php: 8.4
+            os: ubuntu
+            setup: stable
+            phpunit: 11
+
+          - php: 8.4
+            os: ubuntu
+            setup: stable
+            phpunit: 12
 
     name: ${{ matrix.phpunit && format('PHPUnit {0} - ', matrix.phpunit) || '' }}${{ matrix.classmap-authoritative && 'classmap-authoritative - ' || '' }}${{ matrix.coverage && 'Coverage - ' || '' }}PHP ${{ matrix.php }} - ${{ matrix.setup || 'stable' }} - ${{ matrix.os }}
 
@@ -32,7 +38,7 @@ jobs:
 
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -71,7 +77,7 @@ jobs:
         run: composer remove --no-update --no-interaction --dev ondrejmirtes/better-reflection
 
       - name: Downgrade nikic/php-parser
-        if: matrix.phpunit < 11
+        if: matrix.phpunit < 11 && matrix.php < 8.5
         shell: bash
         run: composer require --no-update --no-interaction --dev "nikic/php-parser:^4"
 
@@ -93,26 +99,25 @@ jobs:
 
       - name: Run test suite
         if: matrix.coverage != true
-        run: php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --display-incomplete --display-skipped --display-deprecations --display-errors --display-notices --display-warnings
+        run: php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --exclude-testsuite=localization --default-time-limit=${{ matrix.php >= 8.2 && '2' || '4' }} ${{ matrix.os == 'ubuntu' && '--enforce-time-limit' || '' }} --display-incomplete --display-skipped --display-deprecations --display-errors --display-notices --display-warnings
         env:
           PHP_VERSION: ${{ matrix.php }}
 
       - name: Run test suite with coverage
         if: matrix.coverage
-        run: php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --coverage-clover=clover.xml --coverage-text
+        run: php -d memory_limit=-1 -d zend.enable_gc=0 -d error_reporting=-1 vendor/phpunit/phpunit/phpunit --default-time-limit=3 ${{ matrix.os == 'ubuntu' && '--enforce-time-limit' || '' }} --coverage-clover=clover.xml --coverage-text
         env:
           PHP_VERSION: ${{ matrix.php }}
 
       - name: Code Climate Test Reporter
+        uses: qltysh/qlty-action/coverage@v2
         if: matrix.coverage
-        uses: aktions/codeclimate-test-reporter@v1
         with:
-          codeclimate-test-reporter-id: ${{ secrets.CC_TEST_REPORTER_ID }}
-          command: after-build -t clover
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
-        continue-on-error: true
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: clover.xml
 
       - name: Coverage
         if: matrix.coverage
         uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}

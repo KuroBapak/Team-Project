@@ -1,6 +1,47 @@
 # Release Notes for 11.x
 
-## [Unreleased](https://github.com/laravel/framework/compare/v11.44.6...11.x)
+## [Unreleased](https://github.com/laravel/framework/compare/v11.46.0...11.x)
+
+## [v11.46.0](https://github.com/laravel/framework/compare/v11.45.3...v11.46.0) - 2025-09-08
+
+## [v11.45.3](https://github.com/laravel/framework/compare/v11.45.2...v11.45.3) - 2025-09-02
+
+* [11.x] Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/56649
+* [11.x] Fix exception page not preparing SQL bindings by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/56651
+* [11.x] Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/56849
+* [11.x] Chore: Decouple Str::random() from Validator by [@michaeldyrynda](https://github.com/michaeldyrynda) in https://github.com/laravel/framework/pull/56852
+* [11.x] Allow a wider range of `brick/math` versions by [@GrahamCampbell](https://github.com/GrahamCampbell) in https://github.com/laravel/framework/pull/56890
+
+## [v11.45.2](https://github.com/laravel/framework/compare/v11.45.1...v11.45.2) - 2025-08-13
+
+* [11.x] Fix validation to not throw incompatible validation exception by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/55963
+* [11.x] Fix `symfony/console:7.4` compatibility by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/56015
+* [11.x] Pass the limiter to the when & report callbacks by [@jimmypuckett](https://github.com/jimmypuckett) in https://github.com/laravel/framework/pull/56129
+* [11.x] Backport test fixes by [@GrahamCampbell](https://github.com/GrahamCampbell) in https://github.com/laravel/framework/pull/56183
+* Revert "[11.x] Pass the limiter to the when & report callbacks" by [@GrahamCampbell](https://github.com/GrahamCampbell) in https://github.com/laravel/framework/pull/56184
+* [11.x] Correct how base options for missing config files are preloaded by [@u01jmg3](https://github.com/u01jmg3) in https://github.com/laravel/framework/pull/56216
+* [11.x] backport #56235 by [@calebdw](https://github.com/calebdw) in https://github.com/laravel/framework/pull/56236
+* [11.x] Consistent use of `mb_split()` to split strings into words by [@GrahamCampbell](https://github.com/GrahamCampbell) in https://github.com/laravel/framework/pull/56617
+* [11.x] `CacheSchedulingMutex` should use lock connection by [@GrahamCampbell](https://github.com/GrahamCampbell) in https://github.com/laravel/framework/pull/56614
+* [11.x] Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/56630
+* [11.x] Update `orchestra/testbench-core` deps by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/56636
+
+## [v11.45.1](https://github.com/laravel/framework/compare/v11.45.0...v11.45.1) - 2025-06-03
+
+* Add support for sending raw (non-encoded) attachments in Resend mail by [@Roywcm](https://github.com/Roywcm) in https://github.com/laravel/framework/pull/55837
+* [11.x] Fixes Symfony Console 7.3 deprecations on closure command by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/55888
+
+## [v11.45.0](https://github.com/laravel/framework/compare/v11.44.7...v11.45.0) - 2025-05-20
+
+* [11.x] Test Improvements by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/55549
+* [11.x] Install Passport 13.x by [@hafezdivandari](https://github.com/hafezdivandari) in https://github.com/laravel/framework/pull/55621
+* [11.x] Bump minimum league/commonmark by [@andrextor](https://github.com/andrextor) in https://github.com/laravel/framework/pull/55660
+* Backporting Timebox fixes to 11.x by [@valorin](https://github.com/valorin) in https://github.com/laravel/framework/pull/55705
+* Test SQLServer 2017 on Ubuntu 22.04 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/55716
+* [11.x] Fix Symfony 7.3 deprecations by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/framework/pull/55711
+* [11.x] Backport `TestResponse::assertRedirectBack` by [@GrahamCampbell](https://github.com/GrahamCampbell) in https://github.com/laravel/framework/pull/55780
+
+## [v11.44.7](https://github.com/laravel/framework/compare/v11.44.6...v11.44.7) - 2025-04-25
 
 ## [v11.44.6](https://github.com/laravel/framework/compare/v11.44.5...v11.44.6) - 2025-04-25
 

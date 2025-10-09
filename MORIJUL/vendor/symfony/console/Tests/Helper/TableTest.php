@@ -112,7 +112,21 @@ class TableTest extends TestCase
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +---------------+--------------------------+------------------+
 
-TABLE
+TABLE,
+            ],
+            [
+                ['ISBN', 'Title', 'Author'],
+                $books,
+                'markdown',
+                <<<'TABLE'
+| ISBN          | Title                    | Author           |
+|---------------|--------------------------|------------------|
+| 99921-58-10-7 | Divine Comedy            | Dante Alighieri  |
+| 9971-5-0210-0 | A Tale of Two Cities     | Charles Dickens  |
+| 960-425-059-0 | The Lord of the Rings    | J. R. R. Tolkien |
+| 80-902734-1-6 | And Then There Were None | Agatha Christie  |
+
+TABLE,
             ],
             [
                 ['ISBN', 'Title', 'Author'],
@@ -157,7 +171,7 @@ TABLE
 │ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  │
 └───────────────┴──────────────────────────┴──────────────────┘
 
-TABLE
+TABLE,
             ],
             [
                 ['ISBN', 'Title', 'Author'],
@@ -180,7 +194,7 @@ TABLE
 ║ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  ║
 ╚═══════════════╧══════════════════════════╧══════════════════╝
 
-TABLE
+TABLE,
             ],
             [
                 ['ISBN', 'Title'],
@@ -201,7 +215,7 @@ TABLE
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +---------------+--------------------------+------------------+
 
-TABLE
+TABLE,
             ],
             [
                 [],
@@ -220,7 +234,7 @@ TABLE
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +---------------+--------------------------+------------------+
 
-TABLE
+TABLE,
             ],
             [
                 ['ISBN', 'Title', 'Author'],
@@ -245,7 +259,7 @@ TABLE
 |               |                            | Tolkien         |
 +---------------+----------------------------+-----------------+
 
-TABLE
+TABLE,
             ],
             [
                 ['ISBN', 'Title'],
@@ -256,7 +270,7 @@ TABLE
 | ISBN | Title |
 +------+-------+
 
-TABLE
+TABLE,
             ],
             [
                 [],
@@ -279,7 +293,7 @@ TABLE
 | 9971-5-0210-0 | A Tale of Two Cities | Charles Dickens |
 +---------------+----------------------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Cell text with tags not used for Output styling' => [
                 ['ISBN', 'Title', 'Author'],
@@ -296,7 +310,7 @@ TABLE
 | 9971-5-0210-0                    | A Tale of Two Cities | Charles Dickens |
 +----------------------------------+----------------------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Cell with colspan' => [
                 ['ISBN', 'Title', 'Author'],
@@ -336,7 +350,7 @@ TABLE
 | Cupìdĭtâte díctá âtquè pôrrò, tèmpórà exercitátìónèm mòdí ânìmí núllà nèmò vèl níhìl!       |
 +-------------------------------+-------------------------------+-----------------------------+
 
-TABLE
+TABLE,
             ],
             'Cell after colspan contains new line break' => [
                 ['Foo', 'Bar', 'Baz'],
@@ -355,7 +369,7 @@ TABLE
 | bar       | qux |
 +-----+-----+-----+
 
-TABLE
+TABLE,
             ],
             'Cell after colspan contains multiple new lines' => [
                 ['Foo', 'Bar', 'Baz'],
@@ -375,7 +389,7 @@ TABLE
 |           | quux |
 +-----+-----+------+
 
-TABLE
+TABLE,
             ],
             'Cell with rowspan' => [
                 ['ISBN', 'Title', 'Author'],
@@ -406,7 +420,7 @@ TABLE
 |               | Were None     |                 |
 +---------------+---------------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Cell with rowspan and colspan' => [
                 ['ISBN', 'Title', 'Author'],
@@ -437,7 +451,7 @@ TABLE
 | J. R. R          |                           |
 +------------------+---------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Cell with rowspan and colspan contains new line break' => [
                 ['ISBN', 'Title', 'Author'],
@@ -480,7 +494,7 @@ TABLE
 | 0-0                     |                 |
 +-----------------+-------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Cell with rowspan and colspan without using TableSeparator' => [
                 ['ISBN', 'Title', 'Author'],
@@ -511,7 +525,7 @@ TABLE
 |                 | 0-0                     |
 +-----------------+-------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Cell with rowspan and colspan with separator inside a rowspan' => [
                 ['ISBN', 'Author'],
@@ -533,7 +547,7 @@ TABLE
 |               | Charles Dickens |
 +---------------+-----------------+
 
-TABLE
+TABLE,
             ],
             'Multiple header lines' => [
                 [
@@ -549,7 +563,7 @@ TABLE
 | ISBN | Title | Author |
 +------+-------+--------+
 
-TABLE
+TABLE,
             ],
             'Row with multiple cells' => [
                 [],
@@ -567,7 +581,7 @@ TABLE
 | 1       | 2    | 3    | 4    |
 +---+--+--+---+--+---+--+---+--+
 
-TABLE
+TABLE,
             ],
             'Coslpan and table cells with comment style' => [
                 [
@@ -1294,9 +1308,9 @@ TABLE
                 'footer',
                 'default',
                 <<<'TABLE'
-+---------------+---- Multiline
++---------------+--- Multiline
 header
-here -+------------------+
+here +------------------+
 | ISBN          | Title                    | Author           |
 +---------------+--------------------------+------------------+
 | 99921-58-10-7 | Divine Comedy            | Dante Alighieri  |
@@ -1305,7 +1319,7 @@ here -+------------------+
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +---------------+---------- footer --------+------------------+
 
-TABLE
+TABLE,
             ],
             [
                 'Books',
@@ -1321,7 +1335,7 @@ TABLE
 │ 80-902734-1-6 │ And Then There Were None │ Agatha Christie  │
 └───────────────┴───────── Page 1/2 ───────┴──────────────────┘
 
-TABLE
+TABLE,
             ],
             [
                 'Boooooooooooooooooooooooooooooooooooooooooooooooooooooooks',
@@ -1337,7 +1351,7 @@ TABLE
 | 80-902734-1-6 | And Then There Were None | Agatha Christie  |
 +- Page 1/99999999999999999999999999999999999999999999999... -+
 
-TABLE
+TABLE,
             ],
         ];
     }
@@ -1576,17 +1590,17 @@ EOTXT;
         $expected =
             <<<TABLE
 +-----------------+-----------------+-----------------+
-| Lorem ipsum dolor sit amet, consectetur adipi       |
-| scing elit, sed do eiusmod tempor                   |
+| Lorem ipsum dolor sit amet, consectetur adipiscing  |
+| elit, sed do eiusmod tempor                         |
 +-----------------+-----------------+-----------------+
-| Lorem ipsum dolor sit amet, consectetur             |
-| adipiscing elit, sed do eiusmod tempor              |
+| Lorem ipsum dolor sit amet, consectetur adipiscing  |
+| elit, sed do eiusmod tempor                         |
 +-----------------+-----------------+-----------------+
-| Lorem ipsum dolor sit amet, co    | hello world     |
-| nsectetur                         |                 |
+| Lorem ipsum dolor sit amet, conse | hello world     |
+| ctetur                            |                 |
 +-----------------+-----------------+-----------------+
-| hello world     | Lorem ipsum dolor sit amet, co    |
-|                 | nsectetur adipiscing elit         |
+| hello world     | Lorem ipsum dolor sit amet, conse |
+|                 | ctetur adipiscing elit            |
 +-----------------+-----------------+-----------------+
 | hello           | world           | Lorem ipsum     |
 |                 |                 | dolor sit amet, |
@@ -2075,6 +2089,38 @@ TABLE
 └───────┴───────┘
 
 TABLE,
+            $this->getOutputContent($output)
+        );
+    }
+
+    public function testGithubIssue60038WidthOfCellWithEmoji()
+    {
+        $table = (new Table($output = $this->getOutputStream()))
+            ->setHeaderTitle('Test Title')
+            ->setHeaders(['Title', 'Author'])
+            ->setRows([
+                ['🎭 💫 ☯ Divine Comedy', 'Dante Alighieri'],
+                // the snowflake (e2 9d 84 ef b8 8f) has a variant selector
+                ['👑 ❄️  🗡 Game of Thrones', 'George R.R. Martin'],
+                // the snowflake in text style (e2 9d 84 ef b8 8e) has a variant selector
+                ['❄︎❄︎❄︎ snowflake in text style ❄︎❄︎❄︎', ''],
+                ['And a very long line to show difference in previous lines', ''],
+            ])
+        ;
+        $table->render();
+
+        $this->assertSame(<<<TABLE
++---------------------------------- Test Title -------------+--------------------+
+| Title                                                     | Author             |
++-----------------------------------------------------------+--------------------+
+| 🎭 💫 ☯ Divine Comedy                                     | Dante Alighieri    |
+| 👑 ❄️  🗡 Game of Thrones                                   | George R.R. Martin |
+| ❄︎❄︎❄︎ snowflake in text style ❄︎❄︎❄︎                           |                    |
+| And a very long line to show difference in previous lines |                    |
++-----------------------------------------------------------+--------------------+
+
+TABLE
+            ,
             $this->getOutputContent($output)
         );
     }

@@ -82,10 +82,39 @@ class UploadedFileValueResolverTest extends TestCase
             $request,
             HttpKernelInterface::MAIN_REQUEST
         );
+
+        $this->expectException(HttpException::class);
+
+        $resolver->onKernelControllerArguments($event);
+    }
+
+    /**
+     * @dataProvider provideContext
+     */
+    public function testEmptyArrayArgument(RequestPayloadValueResolver $resolver, Request $request)
+    {
+        $attribute = new MapUploadedFile();
+        $argument = new ArgumentMetadata(
+            'qux',
+            'array',
+            false,
+            false,
+            null,
+            false,
+            [$attribute::class => $attribute]
+        );
+        $event = new ControllerArgumentsEvent(
+            $this->createMock(HttpKernelInterface::class),
+            static function () {},
+            $resolver->resolve($request, $argument),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+
         $resolver->onKernelControllerArguments($event);
         $data = $event->getArguments()[0];
 
-        $this->assertEmpty($data);
+        $this->assertSame([], $data);
     }
 
     /**
@@ -305,6 +334,96 @@ class UploadedFileValueResolverTest extends TestCase
         $this->expectExceptionMessageMatches('/^The file is too large/');
 
         $resolver->onKernelControllerArguments($event);
+    }
+
+    /**
+     * @dataProvider provideContext
+     */
+    public function testShouldAllowEmptyWhenNullable(RequestPayloadValueResolver $resolver, Request $request)
+    {
+        $attribute = new MapUploadedFile();
+        $argument = new ArgumentMetadata(
+            'qux',
+            UploadedFile::class,
+            false,
+            false,
+            null,
+            true,
+            [$attribute::class => $attribute]
+        );
+        /** @var HttpKernelInterface&MockObject $httpKernel */
+        $httpKernel = $this->createMock(HttpKernelInterface::class);
+        $event = new ControllerArgumentsEvent(
+            $httpKernel,
+            static function () {},
+            $resolver->resolve($request, $argument),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+        $resolver->onKernelControllerArguments($event);
+        $data = $event->getArguments()[0];
+
+        $this->assertNull($data);
+    }
+
+    /**
+     * @dataProvider provideContext
+     */
+    public function testShouldAllowEmptyWhenNullableArray(RequestPayloadValueResolver $resolver, Request $request)
+    {
+        $attribute = new MapUploadedFile();
+        $argument = new ArgumentMetadata(
+            'qux',
+            'array',
+            false,
+            false,
+            null,
+            true,
+            [$attribute::class => $attribute]
+        );
+        /** @var HttpKernelInterface&MockObject $httpKernel */
+        $httpKernel = $this->createMock(HttpKernelInterface::class);
+        $event = new ControllerArgumentsEvent(
+            $httpKernel,
+            static function () {},
+            $resolver->resolve($request, $argument),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+        $resolver->onKernelControllerArguments($event);
+        $data = $event->getArguments()[0];
+
+        $this->assertNull($data);
+    }
+
+    /**
+     * @dataProvider provideContext
+     */
+    public function testShouldAllowEmptyWhenHasDefaultValue(RequestPayloadValueResolver $resolver, Request $request)
+    {
+        $attribute = new MapUploadedFile();
+        $argument = new ArgumentMetadata(
+            'qux',
+            UploadedFile::class,
+            false,
+            true,
+            'default-value',
+            false,
+            [$attribute::class => $attribute]
+        );
+        /** @var HttpKernelInterface&MockObject $httpKernel */
+        $httpKernel = $this->createMock(HttpKernelInterface::class);
+        $event = new ControllerArgumentsEvent(
+            $httpKernel,
+            static function () {},
+            $resolver->resolve($request, $argument),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST
+        );
+        $resolver->onKernelControllerArguments($event);
+        $data = $event->getArguments()[0];
+
+        $this->assertSame('default-value', $data);
     }
 
     public static function provideContext(): iterable

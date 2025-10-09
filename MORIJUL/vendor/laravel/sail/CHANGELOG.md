@@ -1,6 +1,37 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/sail/compare/v1.41.0...1.x)
+## [Unreleased](https://github.com/laravel/sail/compare/v1.45.0...1.x)
+
+## [v1.45.0](https://github.com/laravel/sail/compare/v1.44.0...v1.45.0) - 2025-08-25
+
+* Update PostgreSQL and RabbitMQ stubs to use Alpine variants by [@alexjustesen](https://github.com/alexjustesen) in https://github.com/laravel/sail/pull/810
+* feat: Allow Laravel Sail to run Pest 4 Browser tests by [@rogerio-pereira](https://github.com/rogerio-pereira) in https://github.com/laravel/sail/pull/812
+
+## [v1.44.0](https://github.com/laravel/sail/compare/v1.43.1...v1.44.0) - 2025-07-04
+
+* Add tests for laravel 12 and supported vers of php by [@furai](https://github.com/furai) in https://github.com/laravel/sail/pull/801
+* Feature: Allow passing in extra options to MYSQL executable by [@ipontt](https://github.com/ipontt) in https://github.com/laravel/sail/pull/805
+
+## [v1.43.1](https://github.com/laravel/sail/compare/v1.43.0...v1.43.1) - 2025-05-19
+
+* Add missing rabbitmq volume by [@kostamilorava](https://github.com/kostamilorava) in https://github.com/laravel/sail/pull/798
+
+## [v1.43.0](https://github.com/laravel/sail/compare/v1.42.0...v1.43.0) - 2025-05-13
+
+* Fix rabbitmq volumes by [@kiani01lab](https://github.com/kiani01lab) in https://github.com/laravel/sail/pull/793
+* Add the hostname for RabbitMQ by [@kiani01lab](https://github.com/kiani01lab) in https://github.com/laravel/sail/pull/796
+* Add Laravel's official vscode extension to devcontainer stub by [@eamirgh](https://github.com/eamirgh) in https://github.com/laravel/sail/pull/797
+
+## [v1.42.0](https://github.com/laravel/sail/compare/v1.41.1...v1.42.0) - 2025-04-29
+
+* Add the RabbitMQ service by [@kiani01lab](https://github.com/kiani01lab) in https://github.com/laravel/sail/pull/790
+
+## [v1.41.1](https://github.com/laravel/sail/compare/v1.41.0...v1.41.1) - 2025-04-22
+
+* Update logo and socialcard by [@iamdavidhill](https://github.com/iamdavidhill) in https://github.com/laravel/sail/pull/781
+* Fix `DB_DATABASE` replacement in `phpunit.xml` by [@choowx](https://github.com/choowx) in https://github.com/laravel/sail/pull/783
+* Added configurable user for shell commands by [@fkrzski](https://github.com/fkrzski) in https://github.com/laravel/sail/pull/785
+* fix: typesense healthcheck by [@Barbapapazes](https://github.com/Barbapapazes) in https://github.com/laravel/sail/pull/788
 
 ## [v1.41.0](https://github.com/laravel/sail/compare/v1.40.0...v1.41.0) - 2025-01-24
 

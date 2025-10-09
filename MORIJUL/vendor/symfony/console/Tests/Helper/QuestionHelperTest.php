@@ -519,7 +519,7 @@ EOD;
         $question->setMultiline(true);
 
         $this->assertSame("some\ninput", $dialog->ask($this->createStreamableInputInterfaceMock($response), $this->createOutputInterface(), $question));
-        $this->assertSame(8, ftell($response));
+        $this->assertSame(18, ftell($response));
     }
 
     /**
@@ -777,7 +777,7 @@ EOD;
         $application = new Application();
         $application->setAutoExit(false);
         $application->register('question')
-            ->setCode(function ($input, $output) use (&$tries) {
+            ->setCode(function (InputInterface $input, OutputInterface $output) use (&$tries): int {
                 $question = new Question('This is a promptable question');
                 $question->setValidator(function ($value) use (&$tries) {
                     ++$tries;

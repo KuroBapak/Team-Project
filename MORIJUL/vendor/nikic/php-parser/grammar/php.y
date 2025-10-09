@@ -1,6 +1,7 @@
 %pure_parser
 %expect 2
 
+%right T_VOID_CAST
 %right T_THROW
 %left T_INCLUDE T_INCLUDE_ONCE T_EVAL T_REQUIRE T_REQUIRE_ONCE
 %left ','
@@ -26,6 +27,7 @@
 %left '+' '-' '.'
 #endif
 #if PHP8
+%left T_PIPE
 %left '.'
 %left T_SL T_SR
 %left '+' '-'
@@ -257,7 +259,10 @@ top_statement:
     | T_USE use_declarations semi                           { $$ = Stmt\Use_[$2, Stmt\Use_::TYPE_NORMAL]; }
     | T_USE use_type use_declarations semi                  { $$ = Stmt\Use_[$3, $2]; }
     | group_use_declaration
-    | T_CONST constant_declaration_list semi                { $$ = Stmt\Const_[$2]; }
+    | T_CONST constant_declaration_list semi                { $$ = new Stmt\Const_($2, attributes(), []); }
+    | attributes T_CONST constant_declaration_list semi
+          { $$ = new Stmt\Const_($3, attributes(), $1);
+            $this->checkConstantAttributes($$); }
 ;
 
 use_type:
@@ -468,6 +473,7 @@ fn_identifier:
       identifier_not_reserved
     | T_READONLY                                            { $$ = Node\Identifier[$1]; }
     | T_EXIT                                                { $$ = Node\Identifier[$1]; }
+    | T_CLONE                                               { $$ = Node\Identifier[$1]; }
 ;
 
 function_declaration_statement:
@@ -680,6 +686,7 @@ property_modifier:
     | T_PROTECTED_SET           { $$ = Modifiers::PROTECTED_SET; }
     | T_PRIVATE_SET             { $$ = Modifiers::PRIVATE_SET; }
     | T_READONLY                { $$ = Modifiers::READONLY; }
+    | T_FINAL                   { $$ = Modifiers::FINAL; }
 ;
 
 parameter:
@@ -781,6 +788,22 @@ argument_list:
     | '(' variadic_placeholder ')'                          { init($2); }
 ;
 
+clone_argument_list:
+      '(' ')'                                              { $$ = array(); }
+    | '(' non_empty_clone_argument_list optional_comma ')' { $$ = $2; }
+    | '(' expr ',' ')'                                     { init(Node\Arg[$2, false, false]); }
+    | '(' variadic_placeholder ')'                         { init($2); }
+;
+
+non_empty_clone_argument_list:
+		expr ',' argument
+			{ init(new Node\Arg($1, false, false, stackAttributes(#1)), $3); }
+	|	argument_no_expr
+			{ init($1); }
+	|	non_empty_clone_argument_list ',' argument
+			{ push($1, $3); }
+;
+
 variadic_placeholder:
       T_ELLIPSIS                                            { $$ = Node\VariadicPlaceholder[]; }
 ;
@@ -790,12 +813,16 @@ non_empty_argument_list:
     | non_empty_argument_list ',' argument                  { push($1, $3); }
 ;
 
-argument:
-      expr                                                  { $$ = Node\Arg[$1, false, false]; }
-    | ampersand variable                                    { $$ = Node\Arg[$2, true, false]; }
+argument_no_expr:
+      ampersand variable                                    { $$ = Node\Arg[$2, true, false]; }
     | T_ELLIPSIS expr                                       { $$ = Node\Arg[$2, false, true]; }
     | identifier_maybe_reserved ':' expr
           { $$ = new Node\Arg($3, false, false, attributes(), $1); }
+;
+
+argument:
+      expr                                                  { $$ = Node\Arg[$1, false, false]; }
+    | argument_no_expr                                      { $$ = $1; }
 ;
 
 global_var_list:
@@ -1011,6 +1038,7 @@ expr:
           }
     | new_expr
     | match
+    | T_CLONE clone_argument_list                           { $$ = Expr\FuncCall[new Node\Name($1, stackAttributes(#1)), $2]; }
     | T_CLONE expr                                          { $$ = Expr\Clone_[$2]; }
     | variable T_PLUS_EQUAL expr                            { $$ = Expr\AssignOp\Plus      [$1, $3]; }
     | variable T_MINUS_EQUAL expr                           { $$ = Expr\AssignOp\Minus     [$1, $3]; }
@@ -1060,6 +1088,9 @@ expr:
     | expr T_IS_SMALLER_OR_EQUAL expr                       { $$ = Expr\BinaryOp\SmallerOrEqual[$1, $3]; }
     | expr '>' expr                                         { $$ = Expr\BinaryOp\Greater       [$1, $3]; }
     | expr T_IS_GREATER_OR_EQUAL expr                       { $$ = Expr\BinaryOp\GreaterOrEqual[$1, $3]; }
+#if PHP8
+    | expr T_PIPE expr                                      { $$ = Expr\BinaryOp\Pipe[$1, $3]; }
+#endif
     | expr T_INSTANCEOF class_name_reference                { $$ = Expr\Instanceof_[$1, $3]; }
     | '(' expr ')'                                          { $$ = $2; }
     | expr '?' expr ':' expr                                { $$ = Expr\Ternary[$1, $3,   $5]; }
@@ -1072,16 +1103,26 @@ expr:
     | T_EVAL '(' expr ')'                                   { $$ = Expr\Eval_[$3]; }
     | T_REQUIRE expr                                        { $$ = Expr\Include_[$2, Expr\Include_::TYPE_REQUIRE]; }
     | T_REQUIRE_ONCE expr                                   { $$ = Expr\Include_[$2, Expr\Include_::TYPE_REQUIRE_ONCE]; }
-    | T_INT_CAST expr                                       { $$ = Expr\Cast\Int_    [$2]; }
+    | T_INT_CAST expr
+          { $attrs = attributes();
+            $attrs['kind'] = $this->getIntCastKind($1);
+            $$ = new Expr\Cast\Int_($2, $attrs); }
     | T_DOUBLE_CAST expr
           { $attrs = attributes();
             $attrs['kind'] = $this->getFloatCastKind($1);
             $$ = new Expr\Cast\Double($2, $attrs); }
-    | T_STRING_CAST expr                                    { $$ = Expr\Cast\String_ [$2]; }
+    | T_STRING_CAST expr
+          { $attrs = attributes();
+            $attrs['kind'] = $this->getStringCastKind($1);
+            $$ = new Expr\Cast\String_($2, $attrs); }
     | T_ARRAY_CAST expr                                     { $$ = Expr\Cast\Array_  [$2]; }
     | T_OBJECT_CAST expr                                    { $$ = Expr\Cast\Object_ [$2]; }
-    | T_BOOL_CAST expr                                      { $$ = Expr\Cast\Bool_   [$2]; }
+    | T_BOOL_CAST expr
+          { $attrs = attributes();
+            $attrs['kind'] = $this->getBoolCastKind($1);
+            $$ = new Expr\Cast\Bool_($2, $attrs); }
     | T_UNSET_CAST expr                                     { $$ = Expr\Cast\Unset_  [$2]; }
+    | T_VOID_CAST expr                                      { $$ = Expr\Cast\Void_   [$2]; }
     | T_EXIT ctor_arguments
           { $$ = $this->createExitExpr($1, #1, $2, attributes()); }
     | '@' expr                                              { $$ = Expr\ErrorSuppress[$2]; }
@@ -1234,8 +1275,9 @@ dereferenceable_scalar:
       T_ARRAY '(' array_pair_list ')'
           { $attrs = attributes(); $attrs['kind'] = Expr\Array_::KIND_LONG;
             $$ = new Expr\Array_($3, $attrs);
-            $this->createdArrays->attach($$); }
-    | array_short_syntax                                    { $$ = $1; $this->createdArrays->attach($$); }
+            $this->createdArrays->offsetSet($$); }
+    | array_short_syntax
+	      { $$ = $1; $this->createdArrays->offsetSet($$); }
     | T_CONSTANT_ENCAPSED_STRING
           { $$ = Scalar\String_::fromString($1, attributes(), $this->phpVersion->supportsUnicodeEscapes()); }
     | '"' encaps_list '"'

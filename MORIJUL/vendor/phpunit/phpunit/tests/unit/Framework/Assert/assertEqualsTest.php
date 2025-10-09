@@ -65,9 +65,9 @@ final class assertEqualsTest extends TestCase
         $object1  = new SampleClass(4, 8, 15);
         $object2  = new SampleClass(4, 8, 15);
         $storage1 = new SplObjectStorage;
-        $storage1->attach($object1);
+        $storage1->offsetSet($object1);
         $storage2 = new SplObjectStorage;
-        $storage2->attach($object1);
+        $storage2->offsetSet($object1);
 
         return [
             // arrays
@@ -159,9 +159,9 @@ final class assertEqualsTest extends TestCase
         $object2  = new SampleClass(16, 23, 42);
         $object3  = new SampleClass(4, 8, 15);
         $storage1 = new SplObjectStorage;
-        $storage1->attach($object1);
+        $storage1->offsetSet($object1);
         $storage2 = new SplObjectStorage;
-        $storage2->attach($object3); // same content, different object
+        $storage2->offsetSet($object3); // same content, different object
 
         $file = TEST_FILES_PATH . 'foo.xml';
 
@@ -177,11 +177,11 @@ final class assertEqualsTest extends TestCase
             [2, 1],
             // floats
             [2.3, 4.2],
-            [2.3, 4.2, 0.5],
-            [[2.3], [4.2], 0.5],
-            [[[2.3]], [[4.2]], 0.5],
-            [new Struct(2.3), new Struct(4.2), 0.5],
-            [[new Struct(2.3)], [new Struct(4.2)], 0.5],
+            [2.3, 4.2],
+            [[2.3], [4.2]],
+            [[[2.3]], [[4.2]]],
+            [new Struct(2.3), new Struct(4.2)],
+            [[new Struct(2.3)], [new Struct(4.2)]],
             [1 / 3, 1 - 2 / 3],
             [1 / 3, '0.33333333333333337'],
             [1 - 2 / 3, '3333333333333333'],
@@ -233,12 +233,10 @@ final class assertEqualsTest extends TestCase
             [
                 new DateTimeImmutable('2013-03-29 04:13:35', new DateTimeZone('America/New_York')),
                 new DateTimeImmutable('2013-03-29 03:13:35', new DateTimeZone('America/New_York')),
-                3500,
             ],
             [
                 new DateTimeImmutable('2013-03-29 04:13:35', new DateTimeZone('America/New_York')),
                 new DateTimeImmutable('2013-03-29 05:13:35', new DateTimeZone('America/New_York')),
-                3500,
             ],
             [
                 new DateTimeImmutable('2013-03-29', new DateTimeZone('America/New_York')),
@@ -247,7 +245,6 @@ final class assertEqualsTest extends TestCase
             [
                 new DateTimeImmutable('2013-03-29', new DateTimeZone('America/New_York')),
                 new DateTimeImmutable('2013-03-30', new DateTimeZone('America/New_York')),
-                43200,
             ],
             [
                 new DateTimeImmutable('2013-03-29 04:13:35', new DateTimeZone('America/New_York')),
@@ -256,7 +253,6 @@ final class assertEqualsTest extends TestCase
             [
                 new DateTimeImmutable('2013-03-29 04:13:35', new DateTimeZone('America/New_York')),
                 new DateTimeImmutable('2013-03-29 04:13:35', new DateTimeZone('America/Chicago')),
-                3500,
             ],
             [
                 new DateTimeImmutable('2013-03-30', new DateTimeZone('America/New_York')),

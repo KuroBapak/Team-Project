@@ -1,6 +1,44 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/pint/compare/v1.21.2...main)
+## [Unreleased](https://github.com/laravel/pint/compare/v1.25.0...main)
+
+## [v1.25.0](https://github.com/laravel/pint/compare/v1.24.0...v1.25.0) - 2025-09-17
+
+* feat: add support for formatting code from stdin by [@calebdw](https://github.com/calebdw) in https://github.com/laravel/pint/pull/390
+* Allow setting the number of max processes for parallel mode by [@cosmastech](https://github.com/cosmastech) in https://github.com/laravel/pint/pull/392
+* Update dependencies by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/394
+* feat: support boolean shorthand for 'cast_spaces' and add tests by [@artengin](https://github.com/artengin) in https://github.com/laravel/pint/pull/398
+* Fixes compatibility with php-cs-fixer v3.87.0 by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/400
+
+## [v1.24.0](https://github.com/laravel/pint/compare/v1.23.0...v1.24.0) - 2025-07-10
+
+- PHP 8.4 support
+- Adds `-p` as shortcut of `--parallel`
+- Fixes parallel on Windows
+
+## [v1.23.0](https://github.com/laravel/pint/compare/v1.22.1...v1.23.0) - 2025-07-03
+
+- Adds `--parallel` option.
+- Allows extending from a base configuration file.
+
+## [v1.22.1](https://github.com/laravel/pint/compare/v1.22.0...v1.22.1) - 2025-05-08
+
+- Fixes ` Argument #1 ($node) must be of type DOMNode` issue.
+
+## [v1.22.0](https://github.com/laravel/pint/compare/v1.21.2...v1.22.0) - 2025-04-08
+
+### What's Changed
+
+* Writing summaries to file via option by [@Onekone](https://github.com/Onekone) in https://github.com/laravel/pint/pull/344
+* Update logo by [@iamdavidhill](https://github.com/iamdavidhill) in https://github.com/laravel/pint/pull/362
+* Update dependencies by [@crynobone](https://github.com/crynobone) in https://github.com/laravel/pint/pull/364
+
+### New Contributors
+
+* [@Onekone](https://github.com/Onekone) made their first contribution in https://github.com/laravel/pint/pull/344
+* [@iamdavidhill](https://github.com/iamdavidhill) made their first contribution in https://github.com/laravel/pint/pull/362
+
+**Full Changelog**: https://github.com/laravel/pint/compare/v1.21.2...v1.22.0
 
 ## [v1.21.2](https://github.com/laravel/pint/compare/v1.21.1...v1.21.2) - 2025-03-14
 

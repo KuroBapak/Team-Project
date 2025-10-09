@@ -17,26 +17,28 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Carbon\CarbonInterval;
 use Carbon\PHPStan\MacroExtension;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\ClosureTypeFactory;
 use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\Attributes\RequiresPhp;
-use PHPUnit\Framework\Attributes\RequiresPhpunit;
 
-#[RequiresPhpunit('<11')]
-#[RequiresPhp('<8.4')]
+/**
+ * PHPStan is calling deprecated ->setAccessible() method, they already fixed it,
+ * but did not release a new version with the fix.
+ *
+ * Disabling this test for PHP 8.5 until the patch is out.
+ */
+#[RequiresPhp('< 8.5')]
 class MacroExtensionTest extends PHPStanTestCase
 {
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    /** @var MacroExtension */
-    private $extension;
+    private ReflectionProvider $reflectionProvider;
+    private MacroExtension $extension;
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->reflectionProvider = $this->createReflectionProvider();
         $this->extension = new MacroExtension(
             $this->reflectionProvider,
@@ -66,7 +68,7 @@ class MacroExtensionTest extends PHPStanTestCase
 
         $carbon = $this->reflectionProvider->getClass(Carbon::class);
         $method = $this->extension->getMethod($carbon, 'foo');
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
 
         $this->assertSame(
             CarbonInterval::class,
@@ -201,14 +203,14 @@ class MacroExtensionTest extends PHPStanTestCase
         $carbon = $this->reflectionProvider->getClass(Carbon::class);
         $method = $this->extension->getMethod($carbon, 'noParameters');
 
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
 
         $this->assertSame([], $variant->getParameters());
 
         Carbon::macro('twoParameters', function (string $a, $b = 9) {
         });
         $method = $this->extension->getMethod($carbon, 'twoParameters');
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
         $parameters = $variant->getParameters();
 
         $this->assertCount(2, $parameters);
@@ -229,7 +231,7 @@ class MacroExtensionTest extends PHPStanTestCase
         $carbon = $this->reflectionProvider->getClass(Carbon::class);
         $method = $this->extension->getMethod($carbon, 'noReturnType');
 
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
 
         $this->assertSame('mixed', $variant->getReturnType()->describe(VerbosityLevel::typeOnly()));
 
@@ -237,7 +239,7 @@ class MacroExtensionTest extends PHPStanTestCase
         });
 
         $method = $this->extension->getMethod($carbon, 'carbonReturnType');
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
 
         $this->assertSame(Carbon::class, $variant->getReturnType()->describe(VerbosityLevel::typeOnly()));
     }
@@ -280,7 +282,7 @@ class MacroExtensionTest extends PHPStanTestCase
         });
         $carbon = $this->reflectionProvider->getClass(Carbon::class);
         $method = $this->extension->getMethod($carbon, 'variadic');
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
 
         $this->assertTrue($variant->isVariadic());
 
@@ -288,7 +290,7 @@ class MacroExtensionTest extends PHPStanTestCase
         });
 
         $method = $this->extension->getMethod($carbon, 'notVariadic');
-        $variant = ParametersAcceptorSelector::selectSingle($method->getVariants());
+        $variant = $method->getVariants()[0];
 
         $this->assertFalse($variant->isVariadic());
     }

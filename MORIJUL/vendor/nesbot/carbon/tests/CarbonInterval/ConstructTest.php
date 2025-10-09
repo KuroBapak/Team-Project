@@ -52,14 +52,15 @@ class ConstructTest extends AbstractTestCase
 
     public function testConstructWithDateInterval()
     {
+        $month = (PHP_VERSION_ID === 8_03_20) ? 6 : -6; // PHP 8.3.20 triggers segfault with negative or zero values
         $ci = new CarbonInterval(new DateInterval('P1Y2M3D'));
         $this->assertSame('P1Y2M3D', $ci->spec());
         $interval = new DateInterval('P1Y2M3D');
-        $interval->m = -6;
+        $interval->m = $month;
         $interval->invert = 1;
         $ci = new CarbonInterval($interval);
         $this->assertSame(1, $ci->y);
-        $this->assertSame(-6, $ci->m);
+        $this->assertSame($month, $ci->m);
         $this->assertSame(3, $ci->d);
         $this->assertSame(1, $ci->invert);
     }
@@ -309,8 +310,41 @@ class ConstructTest extends AbstractTestCase
 
     public function testInstanceWithDays()
     {
-        $ci = CarbonInterval::instance(Carbon::now()->diff(Carbon::now()->addWeeks(3)));
+        $expectedDiff = PHP_VERSION_ID < 8_02_00 ? false : 21;
+        $diff = Carbon::now()->diffAsDateInterval(Carbon::now()->addWeeks(3));
+        $ci = CarbonInterval::instance($diff);
         $this->assertCarbonInterval($ci, 0, 0, 21, 0, 0, 0);
+        $this->assertSame($expectedDiff, $ci->days);
+        $this->assertSame($expectedDiff, $ci->toDateInterval()->days);
+        $ci2 = CarbonInterval::instance($ci->toDateInterval());
+        $this->assertCarbonInterval($ci2, 0, 0, 21, 0, 0, 0);
+        $this->assertSame($expectedDiff, $ci2->days);
+        $this->assertSame($expectedDiff, $ci2->toDateInterval()->days);
+        $ci3 = unserialize(serialize($ci2));
+        $this->assertCarbonInterval($ci3, 0, 0, 21, 0, 0, 0);
+        $this->assertSame($expectedDiff, $ci3->days);
+        $this->assertSame($expectedDiff, $ci3->toDateInterval()->days);
+
+        $ci = Carbon::now()->diffAsCarbonInterval(Carbon::now()->addWeeks(3));
+        $this->assertCarbonInterval($ci, 0, 0, 21, 0, 0, 0);
+        $this->assertSame($expectedDiff, $ci->days);
+        $this->assertSame($expectedDiff, $ci->toDateInterval()->days);
+    }
+
+    public function testInstanceWithoutDays()
+    {
+        $ci = CarbonInterval::fromString('1 day 3 hours');
+        $this->assertCarbonInterval($ci, 0, 0, 1, 3, 0, 0);
+        $this->assertFalse($ci->days);
+        $this->assertFalse($ci->toDateInterval()->days);
+        $ci2 = CarbonInterval::instance($ci->toDateInterval());
+        $this->assertCarbonInterval($ci2, 0, 0, 1, 3, 0, 0);
+        $this->assertFalse($ci2->days);
+        $this->assertFalse($ci2->toDateInterval()->days);
+        $ci3 = unserialize(serialize($ci2));
+        $this->assertCarbonInterval($ci3, 0, 0, 1, 3, 0, 0);
+        $this->assertFalse($ci3->days);
+        $this->assertFalse($ci3->toDateInterval()->days);
     }
 
     public function testCopy()
@@ -327,6 +361,7 @@ class ConstructTest extends AbstractTestCase
         $this->assertCarbonInterval(CarbonInterval::make('3 hours 30 m'), 0, 0, 0, 3, 30, 0);
         $this->assertCarbonInterval(CarbonInterval::make('PT5H'), 0, 0, 0, 5, 0, 0);
         $this->assertCarbonInterval(CarbonInterval::make('PT13.516837S'), 0, 0, 0, 0, 0, 13, 516_837);
+        $this->assertCarbonInterval(CarbonInterval::make('PT32.245S'), 0, 0, 0, 0, 0, 32, 245_000);
         $this->assertCarbonInterval(CarbonInterval::make('PT13.000001S'), 0, 0, 0, 0, 0, 13, 1);
         $this->assertCarbonInterval(CarbonInterval::make('PT13.001S'), 0, 0, 0, 0, 0, 13, 1_000);
         $this->assertCarbonInterval(CarbonInterval::make(new DateInterval('P1D')), 0, 0, 1, 0, 0, 0);
@@ -470,7 +505,6 @@ class ConstructTest extends AbstractTestCase
         $this->assertSameIntervals($interval, $copy, 1);
     }
 
-    /** @group i */
     public function testFromSerializationConst()
     {
         $past = new Carbon('2024-01-01 00:00:00');
@@ -516,45 +550,5 @@ class ConstructTest extends AbstractTestCase
         $this->assertInstanceOf(CarbonInterval::class, $interval);
         $this->assertSame(2, $interval->m);
         $this->assertSame(5.4e-5, $interval->f);
-    }
-
-    private function assertSameIntervals(CarbonInterval $expected, CarbonInterval $actual, int $microsecondApproximation = 0): void
-    {
-        if (
-            $expected->microseconds !== $actual->microseconds
-            && $microsecondApproximation > 0
-            && $actual->microseconds >= $expected->microseconds - $microsecondApproximation
-            && $actual->microseconds <= $expected->microseconds + $microsecondApproximation
-        ) {
-            $actual->optimize();
-            $expected->optimize();
-            $expected->microseconds = $actual->microseconds;
-        }
-
-        if (PHP_VERSION >= 8.3) {
-            $this->assertEquals($expected, $actual);
-
-            return;
-        }
-
-        $expectedProperties = (array) $expected;
-        unset($expectedProperties['days']);
-        $actualProperties = (array) $actual;
-        unset($actualProperties['days']);
-
-        if (
-            isset($expectedProperties["\0*\0rawInterval"], $actualProperties["\0*\0rawInterval"])
-            && $expectedProperties["\0*\0rawInterval"]->f !== $actualProperties["\0*\0rawInterval"]->f
-            && $microsecondApproximation > 0
-            && $actualProperties["\0*\0rawInterval"]->f >= $expectedProperties["\0*\0rawInterval"]->f - $microsecondApproximation
-            && $actualProperties["\0*\0rawInterval"]->f <= $expectedProperties["\0*\0rawInterval"]->f + $microsecondApproximation
-        ) {
-            unset($expectedProperties["\0*\0rawInterval"]);
-            unset($expectedProperties["\0*\0originalInput"]);
-            unset($actualProperties["\0*\0rawInterval"]);
-            unset($actualProperties["\0*\0originalInput"]);
-        }
-
-        $this->assertEquals($expectedProperties, $actualProperties);
     }
 }
