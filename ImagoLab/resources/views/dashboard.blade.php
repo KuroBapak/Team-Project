@@ -44,11 +44,11 @@
                 <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="font-semibold text-lg">Original</h3>
-                        <img src="{{ $originalUrl }}" alt="Original Image" class="mt-4 rounded-lg w-full">
+                        <img src="{{ $originalUrl }}" alt="Original Image" style="height: 200px; width: 200px;" class="mt-4 rounded-lg w-full">
                     </div>
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <h3 class="font-semibold text-lg">Processed</h3>
-                        <img src="{{ $processedUrl }}" alt="Processed Image" class="mt-4 rounded-lg w-full">
+                        <img src="{{ $processedUrl }}" alt="Processed Image" style="height: 200px; width: 200px; class="mt-4 rounded-lg w-full">
 
                         <a href="{{ $processedUrl }}" download="processed_image.png" class="inline-block mt-4 px-4 py-2 bg-green-600 text-dark font-semibold text-xs uppercase rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                             Download Result
