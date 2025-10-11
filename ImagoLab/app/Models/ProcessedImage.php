@@ -12,6 +12,7 @@ class ProcessedImage extends Model
 
     protected $fillable = [
         'user_id',
+        'tool_type',
         'original_path',
         'processed_path',
     ];

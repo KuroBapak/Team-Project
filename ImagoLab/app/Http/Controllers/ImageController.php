@@ -2,24 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+// --- MISSING IMPORTS ADDED HERE ---
 use App\Models\ProcessedImage;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Illuminate\Http\Client\ConnectionException; // Import this class
+// --- END OF IMPORTS ---
 
 class ImageController extends Controller
 {
+    /**
+     * Display the correct view based on login status.
+     * Guests see 'imago', logged-in users see 'dashboard'.
+     */
     public function index(): View
     {
-        if (Auth::check()) {
-            return view('dashboard');
-        }
-        return view('imago');
+        $toolType = session('tool_type', 'basic');
+        $viewName = Auth::check() ? 'dashboard' : 'imago';
+        return view($viewName, ['toolType' => $toolType]);
     }
 
+    /**
+     * Process the image and return to the correct view with the results.
+     */
     public function process(Request $request)
     {
         $request->validate([
@@ -35,7 +43,7 @@ class ImageController extends Controller
 
         $fastapiUrl = 'http://127.0.0.1:8001/process-image';
 
-        // --- ADDED ERROR HANDLING ---
+        // --- INCOMPLETE CODE IS NOW COMPLETE ---
         try {
             $response = Http::attach(
                 'file', file_get_contents($file), $file->getClientOriginalName()
@@ -46,17 +54,18 @@ class ImageController extends Controller
             }
 
         } catch (ConnectionException $e) {
-            // This new block catches the error if the Python server is down
             return back()->with('error', 'The AI processing service is currently unavailable. Please try again later.');
         }
-        // --- END OF ERROR HANDLING ---
+        // --- END OF COMPLETED CODE ---
 
         $data = $response->json();
         $processedPath = $data['url'];
+        $toolType = session('tool_type', 'basic');
 
         if (Auth::check()) {
             ProcessedImage::create([
                 'user_id' => Auth::id(),
+                'tool_type' => $toolType,
                 'original_path' => $originalPath,
                 'processed_path' => $processedPath,
             ]);
@@ -65,6 +74,7 @@ class ImageController extends Controller
         $viewName = Auth::check() ? 'dashboard' : 'imago';
 
         return view($viewName, [
+            'toolType' => $toolType,
             'originalUrl' => Storage::url($originalPath),
             'processedUrl' => Storage::url($processedPath)
         ]);

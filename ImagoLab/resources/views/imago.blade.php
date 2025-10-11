@@ -51,10 +51,16 @@
                 <hr style="margin: 15px 0;">
 
                 <strong>Processing Mode:</strong><br>
-                <input type="radio" id="removebg" name="mode" value="removebg" checked>
-                <label for="removebg">Remove Background</label><br>
-                <input type="radio" id="grayscale" name="mode" value="grayscale">
-                <label for="grayscale">Convert to Grayscale</label><br>
+                @if(isset($toolType) && $toolType === 'basic')
+                    <input type="radio" id="grayscale" name="mode" value="grayscale" checked>
+                    <label for="grayscale">Convert to Grayscale</label><br>
+                    <p style="font-size: 0.9em; color: #6c757d;">More basic tools coming soon!</p>
+
+                @elseif(isset($toolType) && $toolType === 'advanced')
+                    <input type="radio" id="removebg" name="mode" value="removebg" checked>
+                    <label for="removebg">Remove Background</label><br>
+                    <p style="font-size: 0.9em; color: #6c757d;">AI Super Resolution coming soon!</p>
+                @endif
                 <hr style="margin: 15px 0;">
 
                 <button type="submit">Process Image</button>
@@ -70,7 +76,7 @@
                 <div class="image-box">
                     <h3>Processed</h3>
                     <img src="{{ $processedUrl }}" alt="Processed Image" style="max-width: 100%; border-radius: 5px;">
-                        <a href="{{ $processedUrl }}" download="processed_image.png" class="inline-block mt-4 px-4 py-2 bg-green-600 text-white font-semibold text-xs uppercase rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        <a href="{{ $processedUrl }}" download="processed_image.png" style="display: inline-block; margin-top: 15px; padding: 8px 16px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px;">
                             Download Result
                         </a>
                 </div>

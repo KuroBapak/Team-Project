@@ -15,6 +15,7 @@ public function up(): void
     Schema::create('processed_images', function (Blueprint $table) {
         $table->id();
         $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->string('tool_type');
         $table->string('original_path');
         $table->string('processed_path');
         $table->timestamps();

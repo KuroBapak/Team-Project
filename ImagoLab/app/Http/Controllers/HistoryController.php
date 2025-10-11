@@ -11,11 +11,13 @@ use Illuminate\Support\Facades\Storage;
 class HistoryController extends Controller
 {
     // Show the history page
-    public function index()
-    {
-        $images = Auth::user()->processedImages()->latest()->paginate(9);
-        return view('history', ['images' => $images]);
-    }
+// app/Http/Controllers/HistoryController.php
+public function index()
+{
+    // Get all images for the user; JavaScript will filter them.
+    $images = Auth::user()->processedImages()->latest()->get();
+    return view('history', ['images' => $images]);
+}
 
     // Handle the download request
 // app/Http/Controllers/HistoryController.php
