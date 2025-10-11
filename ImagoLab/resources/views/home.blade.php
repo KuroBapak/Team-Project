@@ -18,7 +18,7 @@
 
         @auth
             <div class="nav-links">
-                <a href="{{ route('selection') }}" class="nav-link">Editor</a>
+                <a href="{{ route('selection') }}" class="nav-link">Selection</a>
                 <a href="{{ route('history.index') }}" class="nav-link">History</a>
                 <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                     @csrf

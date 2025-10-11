@@ -17,14 +17,14 @@ use App\Http\Controllers\ToolController;
 Route::get('/', [DashboardController::class, 'index'])->name('home');
 
 //## TOOL SELECTION & PROCESSING ##//
-Route::get('/selection', [ToolController::class, 'selection'])->name('selection');
+Route::get('/guest', [ToolController::class, 'selection'])->name('selection');
 Route::post('/select-tool', [ToolController::class, 'storeSelection'])->name('tool.select');
 Route::get('/editor', [ImageController::class, 'index'])->name('editor'); // The main editor URL
 Route::post('/process-image', [ImageController::class, 'process'])->name('imago.process');
 
 //## AUTHENTICATED ROUTES (Require Login) ##//
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [ToolController::class, 'selection'])->name('dashboard');
+    Route::get('/user', [ToolController::class, 'selection'])->name('dashboard');
     // History and Profile routes
     Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{image}/download', [HistoryController::class, 'download'])->name('history.download');
