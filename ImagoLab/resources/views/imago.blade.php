@@ -51,16 +51,23 @@
                 <hr style="margin: 15px 0;">
 
                 <strong>Processing Mode:</strong><br>
-                @if(isset($toolType) && $toolType === 'basic')
-                    <input type="radio" id="grayscale" name="mode" value="grayscale" checked>
-                    <label for="grayscale">Convert to Grayscale</label><br>
-                    <p style="font-size: 0.9em; color: #6c757d;">More basic tools coming soon!</p>
+    @if(isset($toolType) && $toolType === 'basic')
+        <div class="flex items-center">
+            <input type="radio" id="grayscale" name="mode" value="grayscale" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+            <label for="grayscale" class="ml-3 block text-sm font-medium text-gray-700">Convert to Grayscale</label>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">More basic tools coming soon!</p>
 
-                @elseif(isset($toolType) && $toolType === 'advanced')
-                    <input type="radio" id="removebg" name="mode" value="removebg" checked>
-                    <label for="removebg">Remove Background</label><br>
-                    <p style="font-size: 0.9em; color: #6c757d;">AI Super Resolution coming soon!</p>
-                @endif
+    @elseif(isset($toolType) && $toolType === 'advanced')
+        <div class="flex items-center">
+            <input type="radio" id="removebg" name="mode" value="removebg" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+            <label for="removebg" class="ml-3 block text-sm font-medium text-gray-700">Remove Background</label>
+        </div>
+        <div class="flex items-center">
+            <input type="radio" id="superres" name="mode" value="superres" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
+            <label for="superres" class="ml-3 block text-sm font-medium text-gray-700">AI Super Resolution (4x)</label>
+        </div>
+    @endif
                 <hr style="margin: 15px 0;">
 
                 <button type="submit">Process Image</button>

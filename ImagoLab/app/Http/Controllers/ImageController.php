@@ -32,7 +32,7 @@ class ImageController extends Controller
     {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
-            'mode' => 'required|in:removebg,grayscale',
+            'mode' => 'required|in:removebg,grayscale,superres',
         ]);
 
         $file = $request->file('image');
@@ -45,7 +45,7 @@ class ImageController extends Controller
 
         // --- INCOMPLETE CODE IS NOW COMPLETE ---
         try {
-            $response = Http::attach(
+            $response = Http::timeout(180)->attach(
                 'file', file_get_contents($file), $file->getClientOriginalName()
             )->post($fastapiUrl, ['mode' => $mode,]);
 
