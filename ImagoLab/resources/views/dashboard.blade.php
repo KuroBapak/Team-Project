@@ -1,72 +1,138 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('AI Image Processor') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-
-                    @if(session('error'))
-                        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-                            <span class="font-medium">Error!</span> {{ session('error') }}
-                        </div>
-                    @endif
-
-                    <form action="{{ route('imago.process') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="file" name="image" required class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
-                        <hr class="my-4">
-
-<strong class="text-lg">Processing Mode:</strong><br>
-<div class="mt-2 space-y-2">
-    @if(isset($toolType) && $toolType === 'basic')
-        <div class="flex items-center">
-            <input type="radio" id="grayscale" name="mode" value="grayscale" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-            <label for="grayscale" class="ml-3 block text-sm font-medium text-gray-700">Convert to Grayscale</label>
-        </div>
-        <p class="text-sm text-gray-500 mt-2">More basic tools coming soon!</p>
-
-    @elseif(isset($toolType) && $toolType === 'advanced')
-        <div class="flex items-center">
-            <input type="radio" id="removebg" name="mode" value="removebg" checked class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-            <label for="removebg" class="ml-3 block text-sm font-medium text-gray-700">Remove Background</label>
-        </div>
-        <div class="flex items-center">
-            <input type="radio" id="superres" name="mode" value="superres" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500">
-            <label for="superres" class="ml-3 block text-sm font-medium text-gray-700">AI Super Resolution (4x)</label>
-        </div>
-    @endif
-</div>
-                        <hr class="my-4">
-
-                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700">Process Image</button>
-                    </form>
-
-                </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImagoLab - Free Image Background Remover</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/indexstyle.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-sparkles"></i>
             </div>
+            <div class="logo-text">ImagoLab</div>
+        </div>
 
-            @if(isset($originalUrl) && isset($processedUrl))
-                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h3 class="font-semibold text-lg">Original</h3>
-                        <img src="{{ $originalUrl }}" alt="Original Image" style="height: 200px; width: 200px;" class="mt-4 rounded-lg w-full object-cover">
-                    </div>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h3 class="font-semibold text-lg">Processed</h3>
-                        <img src="{{ $processedUrl }}" alt="Processed Image" style="height: 200px; width: 200px;" class="mt-4 rounded-lg w-full object-cover">
+        @auth
+            <div class="nav-links">
+                <a href="{{ route('selection') }}" class="nav-link">Editor</a>
+                <a href="{{ route('history.index') }}" class="nav-link">History</a>
+                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                    @csrf
+                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="nav-link">
+                        Logout
+                    </a>
+                </form>
+            </div>
+        @else
+            <div class="nav-links">
+                <a href="{{ route('login') }}" class="nav-link">Login</a>
+                <a href="{{ route('register') }}" class="nav-link" style="text-decoration: none;">Register</a>
+            </div>
+        @endauth
+    </div>
 
-                        <a href="{{ $processedUrl }}" download="processed_image.png" class="inline-block mt-4 px-4 py-2 bg-green-600 text-white font-semibold text-xs uppercase rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Download Result
-                        </a>
-                    </div>
-                </div>
-            @else
-                <p class="text-center mt-6 text-gray-500">Your processed image will appear here.</p>
-            @endif
+    <div class="hero-section">
+        <h1 class="hero-title">Free Image Background Remover</h1>
+        <p class="hero-subtitle">Easily remove the background from images with our AI-powered tool. Continue editing your image to quickly change the background, add graphics, and more.</p>
+    </div>
+
+    <a href="{{ route('login') }}" class="upload-container-link">
+        <div class="upload-container">
+            <div class="upload-header">
+                <div class="upload-icon"><i class="fas fa-image"></i></div>
+                <h2 class="upload-title">Remove the Background</h2>
+            </div>
+            <div class="upload-area">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <div class="upload-text">Drag and drop an image</div>
+                <div class="upload-subtext">or browse to upload</div>
+            </div>
+            <div class="upload-subtext" style="margin-bottom: 20px; text-align: center;">
+                File must be JPEG, JPG, PNG or WebP and up to 10MB
+            </div>
+            <div class="btn btn-primary">
+                <i class="fas fa-upload"></i> Upload Your Photo
+            </div>
+        </div>
+    </a>
+
+    <div class="steps-section">
+        <h2 class="steps-title">How to Remove the Background of a Picture</h2>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3 class="step-title">Select</h3>
+                <p class="step-description">For best results, choose an image where the subject has clear edges with nothing overlapping.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3 class="step-title">Remove</h3>
+                <p class="step-description">Upload your image to automatically remove the background in an instant.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Continue Editing</h3>
+                <p class="step-description">Download your new image as a PNG file with a transparent background to save, share, or keep editing.</p>
+            </div>
         </div>
     </div>
-</x-app-layout>
+
+    <div class="features-section">
+        <h2 class="features-title">Create Transparent Cutout Backgrounds for Your Photos</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-cut"></i></div>
+                <h3 class="feature-title">Background Removal</h3>
+                <p class="feature-description">Highlight the subject of your photo and create a clear background, so you can place your new image into a variety of new designs and destinations.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-expand-alt"></i></div>
+                <h3 class="feature-title">Super Resolution</h3>
+                <p class="feature-description">Enhance image quality and resolution through AI upscaling to make your photos look stunning at any size.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-palette"></i></div>
+                <h3 class="feature-title">Color Adjustments</h3>
+                <p class="feature-description">Adjust brightness, contrast, saturation, and hue to perfect your images with professional-grade tools.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="testimonials-section">
+        </div>
+
+    <div class="cta-section">
+        <h2 class="cta-title">Remove the Background from Your Picture and Download Instantly</h2>
+        <p class="cta-subtitle">Take the background out of a picture faster than ever. It's as easy as selecting your image, uploading it to our free photo background remover, and your image will be ready to download and share in an instant.</p>
+        <div class="cta-buttons">
+            <a href="{{ route('selection') }}" class="btn btn-primary"><i class="fas fa-upload"></i> Start Removing Backgrounds</a>
+            @guest
+                <a href="{{ route('login') }}" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Already Have an Account?</a>
+            @endguest
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="footer-links">
+            <a href="#" class="footer-link">Terms of Use</a>
+            <a href="#" class="footer-link">Privacy Policy</a>
+            <a href="#" class="footer-link">Contact Us</a>
+            <a href="#" class="footer-link">About</a>
+        </div>
+        <p>© 2025 ImagoLab. All rights reserved.</p>
+    </div>
+
+    <style>
+        /* This style makes the entire upload box a clickable link */
+        .upload-container-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+    </style>
+</body>
+</html>
