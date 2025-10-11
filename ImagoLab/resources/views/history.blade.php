@@ -23,7 +23,7 @@
                             @foreach ($images as $image)
                                 <div class="border rounded-lg p-4 flex flex-col">
                                     <div class="flex-grow">
-                                        <img src="{{ Storage::url($image->processed_path) }}" alt="Processed Image" style="height: 200px; width: 200px; class="rounded-md w-full object-cover">
+                                        <img src="{{ Storage::url($image->processed_path) }}" alt="Processed Image" style="height: 200px; width: 200px;" class="rounded-md w-full object-cover">
                                         <p class="text-sm text-gray-500 mt-2">Processed on: {{ $image->created_at->format('M d, Y') }}</p>
                                     </div>
                                     <div class="mt-4 flex justify-between items-center">
