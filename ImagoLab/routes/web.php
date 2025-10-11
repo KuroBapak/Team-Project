@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     // History and Profile routes remain the same.
     Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
     Route::get('/history/{image}/download', [HistoryController::class, 'download'])->name('history.download');
+    Route::delete('/history', [HistoryController::class, 'clearAll'])->name('history.clearAll');
     Route::delete('/history/{image}', [HistoryController::class, 'destroy'])->name('history.destroy');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

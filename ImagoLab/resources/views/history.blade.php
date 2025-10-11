@@ -1,86 +1,128 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Image History') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            <div class="mb-4 flex space-x-2">
-                <button id="filter-basic" class="px-4 py-2 rounded-md font-semibold text-xs uppercase bg-gray-800 text-white">Basic Tools</button>
-                <button id="filter-advanced" class="px-4 py-2 rounded-md font-semibold text-xs uppercase bg-gray-200 text-gray-800">Advanced AI</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImagoLab - History</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/historystyle.css') }}">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-sparkles"></i>
             </div>
-
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-
-                    @if(session('success'))
-                        <div class="mb-4 font-medium text-sm text-green-600">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if($images->isEmpty())
-                        <p>You have no processed images yet. <a href="{{ route('selection') }}" class="text-indigo-600 hover:underline">Process one now!</a></p>
-                    @else
-                        <div id="history-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            @foreach ($images as $image)
-                                <div class="history-card border rounded-lg p-4 flex flex-col" data-tool-type="{{ $image->tool_type }}">
-                                    <div class="flex-grow">
-                                        <img src="{{ Storage::url($image->processed_path) }}" alt="Processed Image" style="height: 200px; width: 200px;" class="rounded-md object-cover mx-auto">
-                                        <p class="text-sm text-gray-500 mt-2 text-center">Processed on: {{ $image->created_at->format('M d, Y') }}</p>
-                                    </div>
-                                    <div class="mt-4 flex justify-between items-center">
-                                        <a href="{{ route('history.download', $image) }}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700">Download</a>
-                                        <form action="{{ route('history.destroy', $image) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this image history?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-sm text-red-600 hover:text-red-900">Delete</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
-            </div>
+            <div class="logo-text">ImagoLab</div>
+        </div>
+        <div class="nav-links">
+            <a href="{{ route('selection') }}" class="nav-link">Selection</a>
+            <a href="{{ route('profile.edit') }}" class="nav-link">Profile</a>
+            <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                @csrf
+                <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="nav-link">
+                    Logout
+                </a>
+            </form>
         </div>
     </div>
 
-    @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const filterBasicBtn = document.getElementById('filter-basic');
-            const filterAdvancedBtn = document.getElementById('filter-advanced');
-            const allCards = document.querySelectorAll('.history-card');
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Editing History</h1>
+            <div class="controls">
+                <form action="{{ route('history.clearAll') }}" method="POST" onsubmit="return confirm('Are you sure you want to clear ALL history? This action cannot be undone.');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-outline">
+                        <i class="fas fa-trash-alt"></i> Clear All
+                    </button>
+                </form>
+                </div>
+        </div>
 
-            function filterHistory(toolType) {
-                allCards.forEach(card => {
-                    card.style.display = card.dataset.toolType === toolType ? 'flex' : 'none';
-                });
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">{{ $totalEdits }}</div>
+                <div class="stat-label">Total Edits</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ $basicEdits }}</div>
+                <div class="stat-label">Basic Tools</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ $advancedEdits }}</div>
+                <div class="stat-label">AI Enhancements</div>
+            </div>
+            </div>
 
-                // FIXED FILTER BUTTON COLORS
-                if (toolType === 'basic') {
-                    // Style for active Basic button
-                    filterBasicBtn.className = 'px-4 py-2 rounded-md font-semibold text-xs uppercase bg-gray-800 text-white';
-                    // Style for inactive Advanced button
-                    filterAdvancedBtn.className = 'px-4 py-2 rounded-md font-semibold text-xs uppercase bg-gray-200 text-gray-800';
-                } else {
-                    // Style for inactive Basic button
-                    filterBasicBtn.className = 'px-4 py-2 rounded-md font-semibold text-xs uppercase bg-gray-200 text-gray-800';
-                    // Style for active Advanced button
-                    filterAdvancedBtn.className = 'px-4 py-2 rounded-md font-semibold text-xs uppercase bg-gray-800 text-white';
-                }
-            }
+        <form method="GET" action="{{ route('history.index') }}" class="filters">
+            <div class="filter-group">
+                <label class="filter-label">Tool Type</label>
+                <select name="tool_type" class="filter-select" onchange="this.form.submit()">
+                    <option value="all" @selected(request('tool_type', 'all') == 'all')>All Tools</option>
+                    <option value="basic" @selected(request('tool_type') == 'basic')>Basic Tools</option>
+                    <option value="advanced" @selected(request('tool_type') == 'advanced')>Advanced AI</option>
+                </select>
+            </div>
 
-            filterBasicBtn.addEventListener('click', () => filterHistory('basic'));
-            filterAdvancedBtn.addEventListener('click', () => filterHistory('advanced'));
+            <div class="filter-group">
+                <label class="filter-label">Date Range</label>
+                <select name="date_range" class="filter-select" onchange="this.form.submit()">
+                    <option value="all" @selected(request('date_range', 'all') == 'all')>All Time</option>
+                    <option value="today" @selected(request('date_range') == 'today')>Today</option>
+                    <option value="week" @selected(request('date_range') == 'week')>Last 7 Days</option>
+                    <option value="month" @selected(request('date_range') == 'month')>Last 30 Days</option>
+                    <option value="year" @selected(request('date_range') == 'year')>This Year</option>
+                </select>
+            </div>
 
-            // Apply default filter on page load
-            filterHistory('basic');
-        });
-    </script>
-    @endpush
-</x-app-layout>
+            <div class="filter-group">
+                <label class="filter-label">Sort By</label>
+                <select name="sort_by" class="filter-select" onchange="this.form.submit()">
+                    <option value="newest" @selected(request('sort_by', 'newest') == 'newest')>Newest First</option>
+                    <option value="oldest" @selected(request('sort_by') == 'oldest')>Oldest First</option>
+                </select>
+            </div>
+        </form>
+
+        <div class="history-grid">
+            @forelse ($images as $image)
+                <div class="history-card">
+                    <img src="{{ Storage::url($image->processed_path) }}" alt="Processed Image" class="history-image">
+                    <div class="history-content">
+                        <div class="history-header">
+                            <h3 class="history-title">{{ Str::of($image->original_path)->basename()->limit(25) }}</h3>
+                            <div class="history-date">{{ $image->created_at->format('M d, Y, g:i A') }}</div>
+                        </div>
+                        <div class="history-tools">
+                            <span class="tool-tag">{{ ucfirst($image->tool_type) }}</span>
+                        </div>
+                        <div class="history-actions">
+                            <a href="{{ route('history.download', $image) }}" class="action-btn download">
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                            <form action="{{ route('history.destroy', $image) }}" method="POST" onsubmit="return confirm('Are you sure?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="action-btn delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="empty-state" style="grid-column: 1 / -1;">
+                    <div class="empty-icon"><i class="fas fa-history"></i></div>
+                    <h2 class="empty-title">No Editing History Found</h2>
+                    <p class="empty-text">No results match your current filters. Try adjusting them or start editing!</p>
+                    <a href="{{ route('selection') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Start Editing</a>
+                </div>
+            @endforelse
+        </div>
+
+        <div class="pagination">
+            {{ $images->links() }}
+        </div>
+    </div>
+</body>
+</html>
