@@ -70,6 +70,9 @@
                 <div class="image-box">
                     <h3>Processed</h3>
                     <img src="{{ $processedUrl }}" alt="Processed Image" style="max-width: 100%; border-radius: 5px;">
+                        <a href="{{ $processedUrl }}" download="processed_image.png" class="inline-block mt-4 px-4 py-2 bg-green-600 text-white font-semibold text-xs uppercase rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                            Download Result
+                        </a>
                 </div>
             </div>
         @else
