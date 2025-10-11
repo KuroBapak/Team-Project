@@ -40,7 +40,6 @@ else:
     GPU_ID = None
 print("---------------------------------")
 
-
 # --- Automatic Model Downloader and Initializer ---
 model_name = 'RealESRGAN_x4plus'
 model_url = f'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/{model_name}.pth'
