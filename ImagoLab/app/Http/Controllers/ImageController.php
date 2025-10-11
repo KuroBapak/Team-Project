@@ -21,7 +21,7 @@ class ImageController extends Controller
     public function index(): View
     {
         $toolType = session('tool_type', 'basic');
-        $viewName = Auth::check() ? 'dashboard' : 'imago';
+        $viewName = Auth::check() ? 'user' : 'guest';
         return view($viewName, ['toolType' => $toolType]);
     }
 
@@ -71,7 +71,7 @@ class ImageController extends Controller
             ]);
         }
 
-        $viewName = Auth::check() ? 'dashboard' : 'imago';
+        $viewName = Auth::check() ? 'user' : 'guest';
 
         return view($viewName, [
             'toolType' => $toolType,
