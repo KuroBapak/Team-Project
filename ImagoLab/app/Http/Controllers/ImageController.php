@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-// --- MISSING IMPORTS ADDED HERE ---
 use App\Models\ProcessedImage;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
@@ -10,14 +9,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-// --- END OF IMPORTS ---
 
 class ImageController extends Controller
 {
-    /**
-     * Display the correct view based on login status.
-     * Guests see 'imago', logged-in users see 'dashboard'.
-     */
     public function index(): View
     {
         $toolType = session('tool_type', 'basic');
@@ -25,38 +19,37 @@ class ImageController extends Controller
         return view($viewName, ['toolType' => $toolType]);
     }
 
-    /**
-     * Process the image and return to the correct view with the results.
-     */
     public function process(Request $request)
     {
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
-            'mode' => 'required|in:removebg,grayscale,superres',
+
+            // THE FIX: Added all the new basic tool modes to the validation list
+            'mode' => [
+                'required',
+                'in:removebg,superres,grayscale,brightness_contrast,rotate,resize,flip,gamma,threshold,saturation,histogram_equalization,blur,sharpen,sobel_edge,morphology'
+            ],
         ]);
 
         $file = $request->file('image');
-        $mode = $request->input('mode');
-
         $originalFilename = time() . '_' . $file->getClientOriginalName();
         $originalPath = $file->storeAs('originals', $originalFilename, 'public');
 
         $fastapiUrl = 'http://127.0.0.1:8001/process-image';
 
-        // --- INCOMPLETE CODE IS NOW COMPLETE ---
         try {
+            // Pass all request data (including new slider values) to the API.
             $response = Http::timeout(180)->attach(
                 'file', file_get_contents($file), $file->getClientOriginalName()
-            )->post($fastapiUrl, ['mode' => $mode,]);
+            )->post($fastapiUrl, $request->all());
 
             if (!$response->successful() || empty($response->json()['url'])) {
                 return back()->with('error', 'AI service failed or returned an invalid response.');
             }
 
         } catch (ConnectionException $e) {
-            return back()->with('error', 'The AI processing service is currently unavailable. Please try again later.');
+            return back()->with('error', 'The AI processing service is currently unavailable or timed out. Please try again later.');
         }
-        // --- END OF COMPLETED CODE ---
 
         $data = $response->json();
         $processedPath = $data['url'];
