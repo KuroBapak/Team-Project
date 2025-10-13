@@ -1,0 +1,139 @@
+/* General Body & Container */
+body {
+    background-color: #0a192f;
+    color: #ccd6f6;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    margin: 0;
+    padding-top: 80px; /* Space for fixed header */
+}
+
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    text-align: center;
+    color: #fff;
+}
+
+/* Profile Card Styling */
+.profile-card {
+    background-color: #112240;
+    border: 1px solid #233554;
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px -15px rgba(2,12,27,0.7);
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0 0 5px 0;
+    color: #fff;
+}
+
+.card-subtitle {
+    font-size: 0.95rem;
+    color: #8892b0;
+    margin-top: 0;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #233554;
+    padding-bottom: 20px;
+}
+
+/* Form Styling */
+.card-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: #ccd6f6;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    background-color: #0a192f;
+    border: 1px solid #233554;
+    border-radius: 8px;
+    color: #ccd6f6;
+    font-size: 1rem;
+    box-sizing: border-box; /* Important for consistent sizing */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #64ffda;
+    box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.2);
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Messages */
+.success-message {
+    color: #64ffda;
+    font-weight: 500;
+    margin-right: auto; /* Pushes the save button to the right */
+}
+.error-message {
+    color: #ff79c6;
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+/* Buttons */
+.btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: #64ffda;
+    color: #0a192f;
+}
+.btn-primary:hover {
+    background-color: #52d1b9;
+}
+
+.btn-danger {
+    background-color: #ff5555;
+    color: #fff;
+}
+.btn-danger:hover {
+    background-color: #e04444;
+}
+
+.danger-zone {
+    border-color: rgba(255, 85, 85, 0.5);
+}
+.danger-zone .card-title {
+    color: #ff79c6;
+}

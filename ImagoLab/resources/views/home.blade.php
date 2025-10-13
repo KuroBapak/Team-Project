@@ -8,31 +8,29 @@
     <link rel="stylesheet" href="{{ asset('css/indexstyle.css') }}">
 </head>
 <body>
+    <canvas id="stars-canvas"></canvas>
+
     <div class="header">
         <div class="logo">
-            <div class="logo-icon">
-                <i class="fas fa-sparkles"></i>
-            </div>
+            <div class="logo-icon"><i class="fas fa-sparkles"></i></div>
             <div class="logo-text">ImagoLab</div>
         </div>
-
-        @auth
-            <div class="nav-links">
-                <a href="{{ route('selection') }}" class="nav-link">Selection</a>
+        <div class="nav-links">
+            @auth
+                {{-- Logged-in User Navbar --}}
+                <a href="{{ route('selection') }}" class="nav-link">Editor</a>
                 <a href="{{ route('history.index') }}" class="nav-link">History</a>
-                <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <a href="{{ route('logout') }}" onclick="event.preventDefault(); this.closest('form').submit();" class="nav-link">
-                        Logout
-                    </a>
+                        <a href="{{ route('logout') }}" class="nav-link" onclick="event.preventDefault();this.closest('form').submit();"> Logout </a>
                 </form>
-            </div>
-        @else
-            <div class="nav-links">
+            @else
+                {{-- Guest Navbar --}}
+                <a href="#" class="nav-link">Features</a>
                 <a href="{{ route('login') }}" class="nav-link">Login</a>
-                <a href="{{ route('register') }}" class="nav-link" style="text-decoration: none;">Register</a>
-            </div>
-        @endauth
+                <a href="{{ route('register') }}" class="nav-link">Register</a>
+            @endauth
+        </div>
     </div>
 
     <div class="hero-section">
@@ -40,7 +38,8 @@
         <p class="hero-subtitle">Easily remove the background from images with our AI-powered tool. Continue editing your image to quickly change the background, add graphics, and more.</p>
     </div>
 
-    <a href="{{ route('login') }}" class="upload-container-link">
+    {{-- For guests, this now links directly to the login page --}}
+    <a href="@auth{{ route('selection') }}@else{{ route('login') }}@endauth" class="upload-container-link" style="text-decoration: none;">
         <div class="upload-container">
             <div class="upload-header">
                 <div class="upload-icon"><i class="fas fa-image"></i></div>
@@ -103,15 +102,47 @@
     </div>
 
     <div class="testimonials-section">
+        <h2 class="testimonials-title">See What People Are Saying About ImagoLab</h2>
+        <div class="testimonials-grid">
+             <div class="testimonial-card">
+                <div class="testimonial-avatar">
+                    <img src="https://st3.depositphotos.com/3581215/18899/v/450/depositphotos_188994514-stock-illustration-vector-illustration-male-silhouette-profile.jpg" alt="Ubaldus">
+                </div>
+                <h3 class="testimonial-name">Ubaldus</h3>
+                <p class="testimonial-role">President University Student</p>
+                <p class="testimonial-text">"ImagoLab's background remover is incredibly fast and accurate. I use it daily for my business and it saves me hours of work!"</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">
+                    <img src="https://st3.depositphotos.com/3581215/18899/v/450/depositphotos_188994514-stock-illustration-vector-illustration-male-silhouette-profile.jpg" alt="Ali">
+                </div>
+                <h3 class="testimonial-name">Ali</h3>
+                <p class="testimonial-role">President University Student</p>
+                <p class="testimonial-text">"The AI-powered tools are game-changing. I can create professional-quality content even though I'm not a designer."</p>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">
+                    <img src="https://st3.depositphotos.com/3581215/18899/v/450/depositphotos_188994514-stock-illustration-vector-illustration-male-silhouette-profile.jpg" alt="Samuel">
+                </div>
+                <h3 class="testimonial-name">Samuel</h3>
+                <p class="testimonial-role">Member PUBC</p>
+                <p class="testimonial-text">"As a student on a budget, I love that ImagoLab offers powerful features for free. It's helped me create amazing projects for school."</p>
+            </div>
         </div>
+    </div>
 
     <div class="cta-section">
         <h2 class="cta-title">Remove the Background from Your Picture and Download Instantly</h2>
         <p class="cta-subtitle">Take the background out of a picture faster than ever. It's as easy as selecting your image, uploading it to our free photo background remover, and your image will be ready to download and share in an instant.</p>
         <div class="cta-buttons">
-            <a href="{{ route('selection') }}" class="btn btn-primary"><i class="fas fa-upload"></i> Start Removing Backgrounds</a>
+             {{-- For guests, this now links directly to the login page --}}
+             <a href="@auth{{ route('selection') }}@else{{ route('login') }}@endauth" class="btn btn-primary cta-button-link">
+                <i class="fas fa-upload"></i> Start Removing Backgrounds
+            </a>
             @guest
-                <a href="{{ route('login') }}" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Already Have an Account?</a>
+            <a href="{{ route('login') }}" class="btn btn-outline">
+                <i class="fas fa-sign-in-alt"></i> Already Have an Account?
+            </a>
             @endguest
         </div>
     </div>
@@ -126,13 +157,37 @@
         <p>© 2025 ImagoLab. All rights reserved.</p>
     </div>
 
-    <style>
-        /* This style makes the entire upload box a clickable link */
-        .upload-container-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
+    {{-- The entire modal HTML block has been removed --}}
+
+    <script>
+        // --- Star background animation ---
+        const canvas = document.getElementById('stars-canvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        const stars = [];
+        const numStars = 150;
+        class Star {
+            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height; this.size = Math.random() * 2; this.speedX = (Math.random() - 0.5) * 0.2; this.speedY = (Math.random() - 0.5) * 0.2; }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX; if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY; }
+            draw() { const opacity = 0.3 + Math.sin(Date.now() * 0.001 + this.x) * 0.2; ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
-    </style>
+        for (let i = 0; i < numStars; i++) { stars.push(new Star()); }
+        function animateStars() { ctx.clearRect(0, 0, canvas.width, canvas.height); stars.forEach(star => { star.update(); star.draw(); }); requestAnimationFrame(animateStars); }
+        animateStars();
+
+        // --- Profile Dropdown Logic ---
+        @auth
+            const profileToggle = document.getElementById('profileToggle');
+            if (profileToggle) {
+                const profileMenu = document.getElementById('profileMenu');
+                profileToggle.addEventListener('click', (e) => { e.stopPropagation(); profileMenu.classList.toggle('show'); });
+                document.addEventListener('click', (e) => { if (!profileToggle.contains(e.target) && !profileMenu.contains(e.target)) profileMenu.classList.remove('show'); });
+            }
+        @endauth
+
+        {{-- The JavaScript for the modal has been removed --}}
+    </script>
 </body>
 </html>
