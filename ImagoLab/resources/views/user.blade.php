@@ -393,7 +393,7 @@ function onOpenCvReady() {
 
                 fetch(imageForm.action, { method: 'POST', body: formData })
                     .then(response => {
-                        if(response.ok)
+                        if(response.ok) window.location.href = "{{ route('tool.select') }}";
                         else throw new Error('Server responded with an error.');
                     })
                     .catch(error => {
