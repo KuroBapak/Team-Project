@@ -61,7 +61,7 @@
             <div class="logo-text">ImagoLab</div>
         </div>
         <div class="nav-links">
-            <a href="{{ route('selection') }}" class="nav-link">Editor Selection</a>
+            <a href="{{ route('selection') }}" class="nav-link">Selection</a>
             <form method="POST" action="{{ route('tool.select') }}" style="display: inline;">
                 @csrf
                 <input type="hidden" name="tool_type" value="{{ $isAdvanced ? 'basic' : 'advanced' }}">
@@ -71,13 +71,19 @@
             </form>
             <div class="profile-dropdown">
                 <button class="profile-toggle" id="profileToggle">
-                    Profile <i class="fas fa-chevron-down" style="font-size:12px;"></i>
+                    {{-- This line is changed --}}
+                    {{ Auth::user()->name }} <i class="fas fa-chevron-down" style="font-size:12px;"></i>
                 </button>
                 <div class="dropdown-menu" id="profileMenu">
                     <a href="{{ route('profile.edit') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
                     <a href="{{ route('history.index') }}" class="dropdown-item"><i class="fas fa-history"></i> History</a>
                     <div class="dropdown-divider"></div>
-                    <form method="POST" action="{{ route('logout') }}">@csrf<a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();this.closest('form').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></form>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();this.closest('form').submit();">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </form>
                 </div>
             </div>
         </div>
@@ -384,7 +390,7 @@ function onOpenCvReady() {
                 document.body.removeChild(link);
                 URL.revokeObjectURL(link.href); // Clean up memory
 
-                // 3. Save to History
+// 3. Save to History
                 const formData = new FormData();
                 formData.append('image', new File([blob], originalFile.name, { type: originalFile.type }));
                 formData.append('_token', document.querySelector('input[name="_token"]').value);
@@ -393,8 +399,21 @@ function onOpenCvReady() {
 
                 fetch(imageForm.action, { method: 'POST', body: formData })
                     .then(response => {
-                        if(response.ok) window.location.href = "{{ route('tool.select') }}";
-                        else throw new Error('Server responded with an error.');
+                        if (response.ok) {
+                            // --- CHANGE START ---
+                            // Instead of redirecting, show a success message on the button
+                            console.log('Successfully saved to history.');
+                            processBtn.innerHTML = '<i class="fas fa-check-circle"></i> Saved!';
+
+                            // Revert the button back to normal after 2 seconds
+                            setTimeout(() => {
+                                processBtn.innerHTML = '<i class="fas fa-save"></i> Finalize & Save';
+                                processBtn.disabled = false;
+                            }, 2000);
+                            // --- CHANGE END ---
+                        } else {
+                            throw new Error('Server responded with an error.');
+                        }
                     })
                     .catch(error => {
                         console.error('Error:', error);
