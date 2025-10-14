@@ -53,31 +53,7 @@
 
         <div class="mode-selector">
 
-            <form method="POST" action="{{ route('tool.select') }}" class="mode-card-form">
-                @csrf
-                <input type="hidden" name="tool_type" value="basic">
-                <button type="submit" class="mode-card-button">
-                    <div class="mode-card">
-                        <div class="mode-header">
-                            <div class="mode-icon"><i class="fas fa-tools"></i></div>
-                            <div class="mode-info">
-                                <h3>Basic Image Tools</h3>
-                                <p>Comprehensive set of fundamental image editing capabilities</p>
-                            </div>
-                        </div>
-                        <div class="mode-features">
-                            <ul class="feature-list">
-                                <li><i class="fas fa-check-circle"></i> Convert to Grayscale</li>
-                                <li><i class="fas fa-check-circle"></i> Color Adjustments</li>
-                                <li><i class="fas fa-check-circle"></i> Crop, Resize, Rotate</li>
-                            </ul>
-                        </div>
-                        <div class="btn btn-primary">
-                            <i class="fas fa-arrow-right"></i> Start Editing
-                        </div>
-                    </div>
-                </button>
-            </form>
+
 
 <form method="POST" action="{{ route('tool.select') }}" class="mode-card-form">
     @csrf
@@ -130,6 +106,34 @@
                     </div>
                 </button>
             </form>
+
+
+                        <form method="POST" action="{{ route('tool.select') }}" class="mode-card-form">
+                @csrf
+                <input type="hidden" name="tool_type" value="basic">
+                <button type="submit" class="mode-card-button">
+                    <div class="mode-card">
+                        <div class="mode-header">
+                            <div class="mode-icon"><i class="fas fa-tools"></i></div>
+                            <div class="mode-info">
+                                <h3>Basic Image Tools</h3>
+                                <p>Comprehensive set of fundamental image editing capabilities</p>
+                            </div>
+                        </div>
+                        <div class="mode-features">
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> Convert to Grayscale</li>
+                                <li><i class="fas fa-check-circle"></i> Color Adjustments</li>
+                                <li><i class="fas fa-check-circle"></i> Crop, Resize, Rotate</li>
+                            </ul>
+                        </div>
+                        <div class="btn btn-primary">
+                            <i class="fas fa-arrow-right"></i> Start Editing
+                        </div>
+                    </div>
+                </button>
+            </form>
+
         </div>
 
         <div class="footer">

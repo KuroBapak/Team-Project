@@ -17,8 +17,8 @@
             <a href="{{ route('selection') }}" class="nav-link">Editor Selection</a>
             <form method="POST" action="{{ route('tool.select') }}" style="display:inline;">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                <input type="hidden" name="tool_type" value="advanced">
-                <button type="submit" class="nav-link-button">Advanced AI</button>
+                <input type="hidden" name="tool_type" value="basic">
+                <button type="submit" class="nav-link-button">Basic Tools</button>
             </form>
             <div class="profile-dropdown">
                 <button class="profile-toggle" id="profileToggle">{{ Auth::user()->name }} <i class="fas fa-chevron-down" style="font-size:12px;"></i></button>
