@@ -6,27 +6,38 @@ use Illuminate\Http\Request;
 
 class ToolController extends Controller
 {
-    /**
-     * Show the tool selection page.
-     */
     public function selection()
     {
         return view('selection');
     }
 
-    /**
-     * Store the user's choice in the session and redirect them to the editor.
-     */
     public function storeSelection(Request $request)
     {
         $validated = $request->validate([
-            'tool_type' => 'required|in:basic,advanced'
+            'tool_type' => 'required|in:basic,advanced,canvas'
         ]);
 
-        // We store the choice in the user's session for this visit.
-        session(['tool_type' => $validated['tool_type']]);
+        $toolType = $validated['tool_type'];
 
-        // Redirect to the main editor page.
+        // THIS IS THE NEW LOGIC
+        if ($toolType === 'canvas') {
+            // If user chose canvas, go to the new, separate route
+            session(['tool_type' => 'canvas']);
+            return redirect()->route('canvas.editor');
+        }
+
+        // Otherwise, use the existing logic for basic/advanced tools
+        session(['tool_type' => $toolType]);
         return redirect()->route('editor');
+    }
+
+    // THIS IS THE NEW METHOD TO SHOW THE CANVAS VIEW
+    public function showCanvasEditor()
+    {
+        // Check if the session is correctly set, otherwise redirect
+        if (session('tool_type') !== 'canvas') {
+            return redirect()->route('selection');
+        }
+        return view('canvas-editor');
     }
 }

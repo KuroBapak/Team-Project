@@ -79,6 +79,32 @@
                 </button>
             </form>
 
+<form method="POST" action="{{ route('tool.select') }}" class="mode-card-form">
+    @csrf
+    <input type="hidden" name="tool_type" value="canvas">
+    <button type="submit" class="mode-card-button">
+        <div class="mode-card">
+            <div class="mode-header">
+                <div class="mode-icon"><i class="fas fa-drafting-compass"></i></div>
+                <div class="mode-info">
+                    <h3>Interactive Canvas</h3>
+                    <p>For cropping, drawing, and precise transformations.</p>
+                </div>
+            </div>
+            <div class="mode-features">
+                <ul class="feature-list">
+                    <li><i class="fas fa-check-circle"></i> Precision Cropping</li>
+                    <li><i class="fas fa-check-circle"></i> Drawing & Annotations</li>
+                    <li><i class="fas fa-check-circle"></i> Shape & Text Tools</li>
+                </ul>
+            </div>
+            <div class="btn btn-primary">
+                <i class="fas fa-arrow-right"></i> Open Canvas
+            </div>
+        </div>
+    </button>
+</form>
+
             <form method="POST" action="{{ route('tool.select') }}" class="mode-card-form">
                 @csrf
                 <input type="hidden" name="tool_type" value="advanced">

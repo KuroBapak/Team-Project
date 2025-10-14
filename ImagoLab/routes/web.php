@@ -21,6 +21,7 @@ Route::get('/guest', [ToolController::class, 'selection'])->name('selection');
 Route::post('/select-tool', [ToolController::class, 'storeSelection'])->name('tool.select');
 Route::get('/editor', [ImageController::class, 'index'])->name('editor'); // The main editor URL
 Route::post('/process-image', [ImageController::class, 'process'])->name('imago.process');
+Route::get('/canvas-editor', [ToolController::class, 'showCanvasEditor'])->name('canvas.editor');
 
 //## AUTHENTICATED ROUTES (Require Login) ##//
 Route::middleware('auth')->group(function () {
