@@ -78,6 +78,7 @@
                     <option value="all" @selected(request('tool_type', 'all') == 'all')>All Tools</option>
                     <option value="basic" @selected(request('tool_type') == 'basic')>Basic Tools</option>
                     <option value="advanced" @selected(request('tool_type') == 'advanced')>Advanced AI</option>
+                    <option value="canvas" @selected(request('tool_type') == 'canvas')>Canvas</option>
                 </select>
             </div>
 

@@ -19,70 +19,100 @@ class ImageController extends Controller
         return view($viewName, ['toolType' => $toolType]);
     }
 
-    public function process(Request $request)
-    {
-        $request->validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
-            'mode' => [
-                'required',
-                'in:removebg,superres,grayscale,brightness_contrast,rotate,resize,flip,gamma,threshold,histogram_equalization,sharpen,sobel_edge,morphology,hue_saturation,contrast_stretching,gaussian_blur,mean_blur,median_blur,laplacian_edge,prewitt_edge,low_pass_filter,high_pass_filter'
-            ],
-        ]);
+public function process(Request $request)
+{
+        if ($request->has('canvas_data')) {
+            $canvasData = $request->input('canvas_data');
+            $image = str_replace('data:image/png;base64,', '', $canvasData);
+            $image = str_replace(' ', '+', $image);
 
-        $file = $request->file('image');
-        $originalFilename = time() . '_' . $file->getClientOriginalName();
-        $originalPath = $file->storeAs('originals', $originalFilename, 'public');
+            // give it a nice filename like your old uploads
+            $timestamp = now()->format('Ymd_His');
+            $originalFilename = "canvas_{$timestamp}.png";
 
-        // --- THIS IS THE FIX ---
-        // The IP address has been corrected from 1227.0.0.1 to 127.0.0.1
-        $fastapiUrl = 'http://127.0.0.1:8001/process-image';
-        // --- END OF FIX ---
+            // save to processed folder (since no "original upload")
+            $processedPath = 'processed/' . $originalFilename;
 
-        try {
-            $response = Http::timeout(180)->attach(
-                'file', file_get_contents($file), $file->getClientOriginalName()
-            )->post($fastapiUrl, $request->all());
+            Storage::disk('public')->put($processedPath, base64_decode($image));
 
-            if (!$response->successful() || empty($response->json()['url'])) {
-                if ($request->wantsJson()) {
-                    return response()->json(['message' => 'AI service failed or returned an invalid response.'], 500);
-                }
-                return back()->with('error', 'AI service failed or returned an invalid response.');
+            $toolType = 'canvas';
+
+            if (Auth::check()) {
+                ProcessedImage::create([
+                    'user_id'       => Auth::id(),
+                    'tool_type'     => $toolType,
+                    'original_path' => 'originals/' . $originalFilename, // mimic old style
+                    'processed_path'=> $processedPath,
+                ]);
             }
 
-        } catch (ConnectionException $e) {
-            if ($request->wantsJson()) {
-                return response()->json(['message' => 'The AI processing service is currently unavailable.'], 503);
-            }
-            return back()->with('error', 'The AI processing service is currently unavailable or timed out. Please try again later.');
-        }
-
-        $data = $response->json();
-        $processedPath = $data['url'];
-        $toolType = session('tool_type', 'basic');
-
-        if (Auth::check()) {
-            ProcessedImage::create([
-                'user_id' => Auth::id(),
-                'tool_type' => $toolType,
-                'original_path' => $originalPath,
-                'processed_path' => $processedPath,
-            ]);
-        }
-
-        if ($request->wantsJson()) {
+            // return silently without message popups
             return response()->json([
-                'success' => true,
-                'message' => 'Image processed and saved to history.',
-                'processedUrl' => Storage::url($processedPath)
+                'success'      => true,
+                'processedUrl' => Storage::url($processedPath),
             ]);
         }
 
-        $viewName = Auth::check() ? 'user' : 'guest';
-        return view($viewName, [
-            'toolType' => $toolType,
-            'originalUrl' => Storage::url($originalPath),
+    // ✅ Old file upload + AI processing flow
+    $request->validate([
+        'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
+        'mode' => [
+            'required',
+            'in:removebg,superres,grayscale,brightness_contrast,rotate,resize,flip,gamma,threshold,histogram_equalization,sharpen,sobel_edge,morphology,hue_saturation,contrast_stretching,gaussian_blur,mean_blur,median_blur,laplacian_edge,prewitt_edge,low_pass_filter,high_pass_filter'
+        ],
+    ]);
+
+    $file = $request->file('image');
+    $originalFilename = time() . '_' . $file->getClientOriginalName();
+    $originalPath = $file->storeAs('originals', $originalFilename, 'public');
+
+    $fastapiUrl = 'http://127.0.0.1:8001/process-image';
+
+    try {
+        $response = Http::timeout(180)->attach(
+            'file', file_get_contents($file), $file->getClientOriginalName()
+        )->post($fastapiUrl, $request->all());
+
+        if (!$response->successful() || empty($response->json()['url'])) {
+            if ($request->wantsJson()) {
+                return response()->json(['message' => 'AI service failed or returned an invalid response.'], 500);
+            }
+            return back()->with('error', 'AI service failed or returned an invalid response.');
+        }
+
+    } catch (ConnectionException $e) {
+        if ($request->wantsJson()) {
+            return response()->json(['message' => 'The AI processing service is currently unavailable.'], 503);
+        }
+        return back()->with('error', 'The AI processing service is currently unavailable or timed out. Please try again later.');
+    }
+
+    $data = $response->json();
+    $processedPath = $data['url'];
+    $toolType = session('tool_type', 'basic');
+
+    if (Auth::check()) {
+        ProcessedImage::create([
+            'user_id'       => Auth::id(),
+            'tool_type'     => $toolType,
+            'original_path' => $originalPath,
+            'processed_path'=> $processedPath,
+        ]);
+    }
+
+    if ($request->wantsJson()) {
+        return response()->json([
+            'success'      => true,
+            'message'      => 'Image processed and saved to history.',
             'processedUrl' => Storage::url($processedPath)
         ]);
     }
+
+    $viewName = Auth::check() ? 'user' : 'guest';
+    return view($viewName, [
+        'toolType'    => $toolType,
+        'originalUrl' => Storage::url($originalPath),
+        'processedUrl'=> Storage::url($processedPath)
+    ]);
+}
 }

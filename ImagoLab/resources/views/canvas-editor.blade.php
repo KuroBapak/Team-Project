@@ -474,25 +474,40 @@ function initializeCanvasEditor() {
         }
     });
 
-    // save/export image
-    document.getElementById('save-btn').addEventListener('click', () => {
-        // hide crop rects if present from export
-        const cropObjs = canvas.getObjects().filter(o => o.isCropRect);
-        const prevOpacities = cropObjs.map(o => o.opacity);
-        cropObjs.forEach(o => o.set('opacity', 0));
-        canvas.renderAll();
+    // -------------------- save/export image (fixed) --------------------
+    document.getElementById("save-btn").addEventListener("click", function () {
+        // 1️⃣ Get canvas data
+        const canvasData = canvas.toDataURL("image/png");
 
-        const dataURL = canvas.toDataURL({ format: 'png', quality: 1.0 });
-
-        cropObjs.forEach((o, i) => o.set('opacity', prevOpacities[i] || 1));
-        canvas.renderAll();
-
-        const link = document.createElement('a');
-        link.download = 'imagolab_canvas_edit.png';
-        link.href = dataURL;
+        // 2️⃣ Auto download first
+        const link = document.createElement("a");
+        link.href = canvasData;
+        link.download = `ImagoLab_Canvas_${Date.now()}.png`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
+        // 3️⃣ Send to backend to save in history
+        fetch("/process-image", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content")
+            },
+            body: JSON.stringify({
+                canvas_data: canvasData,
+                mode: "canvas" // backend can check this
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                console.log("✅ Canvas auto-downloaded and saved to history:", data.processedUrl);
+            } else {
+                console.error("❌ Failed to save canvas:", data);
+            }
+        })
+        .catch(err => console.error("⚠️ Error saving canvas:", err));
     });
 
     // -------- object color property (fill) --------

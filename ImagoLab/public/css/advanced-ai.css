@@ -173,11 +173,11 @@
             .container {
                 grid-template-columns: 1fr;
             }
-            
+
             .header {
                 padding: 20px;
             }
-            
+
             .nav-links {
                 display: none;
             }

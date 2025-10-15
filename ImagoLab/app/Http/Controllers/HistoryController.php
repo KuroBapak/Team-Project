@@ -9,9 +9,36 @@ use Illuminate\Support\Facades\Storage;
 
 class HistoryController extends Controller
 {
-    /**
-     * Show the filterable and sortable history page.
-     */
+        public function saveCanvas(Request $request){
+        $data = $request->input('image');
+        if (!$data) {
+            return response()->json(['success' => false, 'message' => 'No image data']);
+        }
+
+        // decode base64 image
+        $image = str_replace('data:image/png;base64,', '', $data);
+        $image = str_replace(' ', '+', $image);
+
+        $filename = 'canvas_' . uniqid() . '.png';
+        $path = 'processed/' . $filename;
+
+        Storage::disk('public')->put($path, base64_decode($image));
+
+        // Save in DB under logged in user
+        $record = Auth::user()->processedImages()->create([
+            'tool_type' => 'canvas', // You can call it 'basic', 'advanced', or 'canvas'
+            'original_path' => null,
+            'processed_path' => $path,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Saved to history',
+            'id' => $record->id,
+            'path' => $path
+        ]);
+    }
+
     public function index(Request $request)
     {
         // Start a query for the logged-in user's images
