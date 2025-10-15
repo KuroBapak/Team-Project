@@ -9,36 +9,6 @@ use Illuminate\Support\Facades\Storage;
 
 class HistoryController extends Controller
 {
-        public function saveCanvas(Request $request){
-        $data = $request->input('image');
-        if (!$data) {
-            return response()->json(['success' => false, 'message' => 'No image data']);
-        }
-
-        // decode base64 image
-        $image = str_replace('data:image/png;base64,', '', $data);
-        $image = str_replace(' ', '+', $image);
-
-        $filename = 'canvas_' . uniqid() . '.png';
-        $path = 'processed/' . $filename;
-
-        Storage::disk('public')->put($path, base64_decode($image));
-
-        // Save in DB under logged in user
-        $record = Auth::user()->processedImages()->create([
-            'tool_type' => 'canvas', // You can call it 'basic', 'advanced', or 'canvas'
-            'original_path' => null,
-            'processed_path' => $path,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Saved to history',
-            'id' => $record->id,
-            'path' => $path
-        ]);
-    }
-
     public function index(Request $request)
     {
         // Start a query for the logged-in user's images
@@ -85,20 +55,25 @@ class HistoryController extends Controller
     /**
      * Delete all history items for the logged-in user.
      */
-    public function clearAll()
-    {
-        $images = Auth::user()->processedImages()->get();
+public function clearAll()
+{
+    // Get the query builder for the user's images, but don't execute it yet
+    $userImagesQuery = Auth::user()->processedImages();
 
-        foreach ($images as $image) {
-            // Delete the physical files
-            Storage::disk('public')->delete($image->original_path);
-            Storage::disk('public')->delete($image->processed_path);
-            // Delete the database record
-            $image->delete();
-        }
+    // 1. Pluck all the file paths into simple arrays.
+    // ->filter() is used to ignore any records where a path might be null.
+    $originalPaths = $userImagesQuery->pluck('original_path')->filter()->all();
+    $processedPaths = $userImagesQuery->pluck('processed_path')->filter()->all();
 
-        return redirect()->route('history.index')->with('success', 'All history has been cleared.');
-    }
+    // 2. Delete all the files from storage in two bulk operations.
+    Storage::disk('public')->delete($originalPaths);
+    Storage::disk('public')->delete($processedPaths);
+
+    // 3. Delete all database records in a single, efficient query.
+    $userImagesQuery->delete();
+
+    return redirect()->route('history.index')->with('success', 'All history has been cleared.');
+}
 
     // Your existing download() and destroy() methods are perfect and remain unchanged.
     public function download(ProcessedImage $image)

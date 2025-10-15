@@ -73,7 +73,7 @@
                 <div class="feature-selector">
                     <div class="feature-option active" data-feature="removebg"><i class="fas fa-cut"></i><h3>Background Removal</h3><p>AI segmentation for clean cutouts</p></div>
                     <div class="feature-option" data-feature="superres"><i class="fas fa-expand-alt"></i><h3>Super Resolution</h3><p>AI upscaling for high quality</p></div>
-                    <div class="feature-option" data-feature="playground" style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-flask"></i><h3>Playground</h3><p>(Coming Soon)</p></div>
+                    <div class="feature-option" data-feature="autocolor"><i class="fas fa-expand-alt"></i><h3>Auto Color Correction</h3><p>AI Auto Color Correction for best visual</p></div>
                     <div class="feature-option" data-feature="showcase" style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-th-large"></i><h3>Showcase</h3><p>(Coming Soon)</p></div>
                 </div>
                 <div class="presets-section"><div class="presets-header"><h3>AI Presets</h3></div><div class="presets"><div class="preset active">Professional</div><div class="preset">Creative</div><div class="preset">Minimalist</div><div class="preset">Vibrant</div></div></div>

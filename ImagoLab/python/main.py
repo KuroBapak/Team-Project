@@ -1,7 +1,6 @@
 import io
 import os
 import uuid
-import time
 import traceback
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,11 +23,11 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"],
 )
 
-OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "storage", "app", "public", "processed")
+# Use the more robust path relative to the Laravel project root
+OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "public", "storage", "processed")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# --- GPU/Model Initialization (Unchanged) ---
-# ... your existing model loading code ...
+# --- GPU/Model Initialization ---
 print("--- Starting ImagoLab AI Server ---")
 if torch.cuda.is_available():
     print(f"✅ PyTorch has access to CUDA.")
@@ -50,7 +49,12 @@ upsampler = RealESRGANer(scale=4, model_path=model_path, model=model, tile=0, ti
 
 # --- HELPER FUNCTIONS ---
 
-# --- Existing Functions (Unchanged) ---
+# This is the new helper function for the Auto Color feature
+def apply_autocolor(image):
+    """Applies Gray World white balance algorithm."""
+    wb = cv2.xphoto.createGrayworldWB()
+    return wb.balanceWhite(image)
+
 def rotate_image(image, angle=0):
     if angle == 0: return image
     (h, w) = image.shape[:2]; center = (w // 2, h // 2)
@@ -100,8 +104,6 @@ def apply_threshold(image, thresh_val=128, adaptive=False):
     if adaptive: return cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2)
     else: _, thresh = cv2.threshold(gray, thresh_val, 255, cv2.THRESH_BINARY); return thresh
 
-# --- NEWLY IMPLEMENTED FUNCTIONS ---
-
 def apply_brightness_contrast(img, brightness=0, contrast=0):
     alpha = 1.0 + contrast / 100.0
     beta = brightness
@@ -110,10 +112,8 @@ def apply_brightness_contrast(img, brightness=0, contrast=0):
 def apply_hsv(image, hue_shift=0, saturation_shift=0):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
-    # Hue is 0-179 in OpenCV. We wrap around.
     h = (h.astype(int) + hue_shift) % 180
     h = h.astype(np.uint8)
-    # Saturation is 0-255. We clip.
     s = cv2.add(s, saturation_shift)
     final_hsv = cv2.merge((h, s, v))
     return cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
@@ -149,16 +149,17 @@ def apply_fourier_filter(image, radius=30, high_pass=False):
     rows, cols = gray.shape
     crow, ccol = rows // 2 , cols // 2
     mask = np.zeros((rows, cols, 2), np.uint8)
-    if high_pass: # High-pass filter (keeps high frequencies)
+    if high_pass:
         cv2.circle(mask, (ccol, crow), radius, (1, 1), -1)
         mask = 1 - mask
-    else: # Low-pass filter (keeps low frequencies)
+    else:
         cv2.circle(mask, (ccol, crow), radius, (1, 1), -1)
     fshift = dft_shift * mask
     f_ishift = np.fft.ifftshift(fshift)
     img_back = cv2.idft(f_ishift)
     img_back = cv2.magnitude(img_back[:,:,0], img_back[:,:,1])
     return cv2.normalize(img_back, None, 0, 255, cv2.NORM_MINMAX)
+
 
 @app.post("/process-image")
 async def process_image(
@@ -181,15 +182,27 @@ async def process_image(
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         output_image = None
 
-        # ADVANCED AI TOOLS
+        # --- ADVANCED AI TOOLS ---
         if mode == "removebg":
+            # rembg requires PIL Image, so we handle it separately
             input_pil = Image.open(io.BytesIO(contents))
             output_pil = remove(input_pil)
-            output_path = os.path.join(OUTPUT_DIR, f"{uuid.uuid4().hex[:8]}.png")
-            output_pil.save(output_path, "PNG"); return {"url": f"processed/{os.path.basename(output_path)}"}
-        elif mode == "superres": output_image, _ = upsampler.enhance(img, outscale=4)
 
-        # BASIC TOOLS
+            # Create a unique filename and save
+            filename = f"{uuid.uuid4().hex[:10]}.png"
+            output_path = os.path.join(OUTPUT_DIR, filename)
+            output_pil.save(output_path, "PNG")
+
+            # Return the relative path for Laravel
+            return {"url": f"processed/{filename}"}
+
+        elif mode == "superres":
+            output_image, _ = upsampler.enhance(img, outscale=4)
+
+        elif mode == "autocolor":
+            output_image = apply_autocolor(img)
+
+        # --- BASIC TOOLS ---
         elif mode == "grayscale": output_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         elif mode == "brightness_contrast": output_image = apply_brightness_contrast(img, brightness, contrast)
         elif mode == "rotate": output_image = rotate_image(img, angle)
@@ -201,8 +214,6 @@ async def process_image(
         elif mode == "sharpen": output_image = apply_sharpen(img)
         elif mode == "sobel_edge": output_image = apply_sobel_edge(img)
         elif mode == "morphology": output_image = apply_morphology(img, morph_op, morph_kernel)
-
-        # NEWLY ADDED MODES
         elif mode == "hue_saturation": output_image = apply_hsv(img, hue, saturation)
         elif mode == "contrast_stretching": output_image = apply_contrast_stretching(img)
         elif mode == "gaussian_blur": output_image = cv2.GaussianBlur(img, (blur if blur % 2 != 0 else blur + 1, blur if blur % 2 != 0 else blur + 1), 0)
@@ -212,13 +223,19 @@ async def process_image(
         elif mode == "prewitt_edge": output_image = apply_prewitt_edge(img)
         elif mode == "low_pass_filter": output_image = apply_fourier_filter(img, fourier_radius, high_pass=False)
         elif mode == "high_pass_filter": output_image = apply_fourier_filter(img, fourier_radius, high_pass=True)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid processing mode specified.")
 
-        else: raise HTTPException(status_code=400, detail="Invalid processing mode specified.")
-
+        # --- SAVE & RETURN (for all modes except removebg) ---
         if output_image is not None:
-            filename = f"{uuid.uuid4().hex[:8]}.png"
+            filename = f"{uuid.uuid4().hex[:10]}.png"
             output_path = os.path.join(OUTPUT_DIR, filename)
-            cv2.imwrite(output_path, output_image.astype(np.uint8))
+
+            # Ensure the image data is in a saveable format
+            saveable_image = output_image.astype(np.uint8)
+            cv2.imwrite(output_path, saveable_image)
+
+            # Return the relative path for Laravel
             return {"url": f"processed/{filename}"}
         else:
             raise HTTPException(status_code=500, detail="Image processing failed to produce an output.")
@@ -226,3 +243,7 @@ async def process_image(
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"An internal error occurred: {str(e)}")
+
+@app.get("/")
+def read_root():
+    return {"status": "ImagoLab AI Service is running"}

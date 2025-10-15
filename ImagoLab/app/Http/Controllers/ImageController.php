@@ -58,7 +58,7 @@ public function process(Request $request)
         'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:10240',
         'mode' => [
             'required',
-            'in:removebg,superres,grayscale,brightness_contrast,rotate,resize,flip,gamma,threshold,histogram_equalization,sharpen,sobel_edge,morphology,hue_saturation,contrast_stretching,gaussian_blur,mean_blur,median_blur,laplacian_edge,prewitt_edge,low_pass_filter,high_pass_filter'
+            'in:removebg,superres,autocolor,grayscale,brightness_contrast,rotate,resize,flip,gamma,threshold,histogram_equalization,sharpen,sobel_edge,morphology,hue_saturation,contrast_stretching,gaussian_blur,mean_blur,median_blur,laplacian_edge,prewitt_edge,low_pass_filter,high_pass_filter'
         ],
     ]);
 
