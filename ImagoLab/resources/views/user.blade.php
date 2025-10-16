@@ -70,12 +70,33 @@
             {{-- ADVANCED AI EDITOR --}}
             <div class="card">
                 <div class="card-header"><i class="fas fa-robot"></i><h2>Advanced AI Features</h2></div>
-                <div class="feature-selector">
-                    <div class="feature-option active" data-feature="removebg"><i class="fas fa-cut"></i><h3>Background Removal</h3><p>AI segmentation for clean cutouts</p></div>
-                    <div class="feature-option" data-feature="superres"><i class="fas fa-expand-alt"></i><h3>Super Resolution</h3><p>AI upscaling for high quality</p></div>
-                    <div class="feature-option" data-feature="autocolor"><i class="fas fa-expand-alt"></i><h3>Auto Color Correction</h3><p>AI Auto Color Correction for best visual</p></div>
-                    <div class="feature-option" data-feature="showcase" style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-th-large"></i><h3>Showcase</h3><p>(Coming Soon)</p></div>
-                </div>
+<div class="feature-selector">
+    <div class="feature-option active" data-feature="removebg">
+        <i class="fas fa-cut"></i>
+        <h3>Background Removal</h3>
+        <p>AI segmentation for clean cutouts</p>
+    </div>
+    <div class="feature-option" data-feature="superres">
+        <i class="fas fa-expand-alt"></i>
+        <h3>Super Resolution</h3>
+        <p>AI upscaling for high quality</p>
+    </div>
+    <div class="feature-option" data-feature="autocolor">
+        <i class="fas fa-palette"></i>
+        <h3>Auto Color Correction</h3>
+        <p>AI auto-balancing for best visual</p>
+    </div>
+    <div class="feature-option" data-feature="lowlight_enhance">
+        <i class="fas fa-moon"></i>
+        <h3>Low-Light Enhance</h3>
+        <p>Illuminate dark photos with AI</p>
+    </div>
+    <div class="feature-option" data-feature="showcase" style="opacity: 0.5; cursor: not-allowed;">
+        <i class="fas fa-th-large"></i>
+        <h3>Showcase</h3>
+        <p>(Coming Soon)</p>
+    </div>
+</div>
                 <div class="presets-section"><div class="presets-header"><h3>AI Presets</h3></div><div class="presets"><div class="preset active">Professional</div><div class="preset">Creative</div><div class="preset">Minimalist</div><div class="preset">Vibrant</div></div></div>
                 <div class="mode-selector"><div class="mode-btn active">Server Processing</div><div class="mode-btn" style="opacity: 0.5; cursor: not-allowed;">Local Processing</div></div>
                 <div class="info-box"><p><i class="fas fa-server"></i> All requests are processed on our secure backend.</p></div>

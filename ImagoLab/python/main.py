@@ -9,6 +9,14 @@ from rembg import remove
 import numpy as np
 import cv2
 import torch
+import torchvision.transforms as transforms
+
+# Import the model architecture script for Zero-DCE.
+try:
+    import lowlight_enhancer
+except ImportError:
+    print("⚠️ WARNING: 'lowlight_enhancer.py' not found. The Low-Light Enhancement feature will be disabled.")
+    lowlight_enhancer = None
 
 # AI/ML Library Imports
 from realesrgan import RealESRGANer
@@ -23,7 +31,6 @@ app.add_middleware(
     allow_methods=["*"], allow_headers=["*"],
 )
 
-# Use the more robust path relative to the Laravel project root
 OUTPUT_DIR = os.path.join(os.path.dirname(__file__), "..", "public", "storage", "processed")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
@@ -33,10 +40,13 @@ if torch.cuda.is_available():
     print(f"✅ PyTorch has access to CUDA.")
     print(f"   GPU Device: {torch.cuda.get_device_name(0)}")
     GPU_ID = 0
+    DEVICE = torch.device("cuda")
 else:
     print("⚠️ PyTorch CANNOT find a CUDA-enabled GPU. AI models will run on CPU (this will be very slow).")
     GPU_ID = None
-print("---------------------------------")
+    DEVICE = torch.device("cpu")
+
+# --- RealESRGAN Model Loading ---
 model_name = 'RealESRGAN_x4plus'
 model_url = f'https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/{model_name}.pth'
 model_path = os.path.join('weights', f'{model_name}.pth')
@@ -47,11 +57,49 @@ if not os.path.isfile(model_path):
 model = RRDBNet(num_in_ch=3, num_out_ch=3, num_feat=64, num_block=23, num_grow_ch=32, scale=4)
 upsampler = RealESRGANer(scale=4, model_path=model_path, model=model, tile=0, tile_pad=10, pre_pad=0, half=False, gpu_id=GPU_ID)
 
+# --- Zero-DCE Low-Light Model Loading ---
+print("Loading Zero-DCE Low-Light Enhancement model...")
+lowlight_model = None
+if lowlight_enhancer:
+    lowlight_model_path = os.path.join('weights', 'zero_dce.pth')
+    if not os.path.isfile(lowlight_model_path):
+        print(f"⚠️  WARNING: Low-light model weights not found at '{lowlight_model_path}'. Feature disabled.")
+    else:
+        try:
+            lowlight_model = lowlight_enhancer.enhance_net_nopool().to(DEVICE)
+            lowlight_model.load_state_dict(torch.load(lowlight_model_path, map_location=DEVICE))
+            lowlight_model.eval()
+            print("✅ Zero-DCE model loaded successfully.")
+        except Exception as e:
+            print(f"❌ ERROR: Failed to load Zero-DCE model. Feature disabled. Error: {e}")
+            lowlight_model = None
+print("---------------------------------")
+
+
 # --- HELPER FUNCTIONS ---
 
-# This is the new helper function for the Auto Color feature
+def enhance_low_light(image_cv, model):
+    """Applies the Zero-DCE model to enhance a low-light image."""
+    image_rgb = cv2.cvtColor(image_cv, cv2.COLOR_BGR2RGB)
+    pil_img = Image.fromarray(image_rgb)
+
+    transform = transforms.Compose([transforms.ToTensor()])
+    input_tensor = transform(pil_img).unsqueeze(0).to(DEVICE)
+
+    with torch.no_grad():
+        # The model returns the enhancement curve as a tuple
+        enhancement_curve = model(input_tensor)
+
+    # The final image is the original image + the first element of the enhancement curve tuple
+    final_tensor = input_tensor + enhancement_curve[0]
+
+    # Post-processing to convert tensor back to OpenCV image
+    output_image_np = final_tensor.squeeze(0).cpu().permute(1, 2, 0).numpy()
+    output_image_np = (output_image_np * 255).clip(0, 255).astype(np.uint8)
+
+    return cv2.cvtColor(output_image_np, cv2.COLOR_RGB2BGR)
+
 def apply_autocolor(image):
-    """Applies Gray World white balance algorithm."""
     wb = cv2.xphoto.createGrayworldWB()
     return wb.balanceWhite(image)
 
@@ -164,14 +212,12 @@ def apply_fourier_filter(image, radius=30, high_pass=False):
 @app.post("/process-image")
 async def process_image(
     file: UploadFile = File(...), mode: str = Form(...),
-    # Existing Params
     brightness: int = Form(0), contrast: int = Form(0),
     angle: int = Form(0), scale_percent: int = Form(100),
     flip: int = Form(99), blur: int = Form(1),
     morph_op: str = Form('erosion'), morph_kernel: int = Form(5),
     gamma: float = Form(1.0), threshold_value: int = Form(128),
     adaptive_threshold: bool = Form(False),
-    # New Params
     hue: int = Form(0), saturation: int = Form(0),
     median_blur: int = Form(1), mean_blur: int = Form(1),
     fourier_radius: int = Form(30)
@@ -182,18 +228,12 @@ async def process_image(
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
         output_image = None
 
-        # --- ADVANCED AI TOOLS ---
         if mode == "removebg":
-            # rembg requires PIL Image, so we handle it separately
             input_pil = Image.open(io.BytesIO(contents))
             output_pil = remove(input_pil)
-
-            # Create a unique filename and save
             filename = f"{uuid.uuid4().hex[:10]}.png"
             output_path = os.path.join(OUTPUT_DIR, filename)
             output_pil.save(output_path, "PNG")
-
-            # Return the relative path for Laravel
             return {"url": f"processed/{filename}"}
 
         elif mode == "superres":
@@ -202,7 +242,11 @@ async def process_image(
         elif mode == "autocolor":
             output_image = apply_autocolor(img)
 
-        # --- BASIC TOOLS ---
+        elif mode == "lowlight_enhance":
+            if lowlight_model is None:
+                raise HTTPException(status_code=501, detail="Low-light enhancement model is not available on the server.")
+            output_image = enhance_low_light(img, lowlight_model)
+
         elif mode == "grayscale": output_image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         elif mode == "brightness_contrast": output_image = apply_brightness_contrast(img, brightness, contrast)
         elif mode == "rotate": output_image = rotate_image(img, angle)
@@ -226,16 +270,11 @@ async def process_image(
         else:
             raise HTTPException(status_code=400, detail="Invalid processing mode specified.")
 
-        # --- SAVE & RETURN (for all modes except removebg) ---
         if output_image is not None:
             filename = f"{uuid.uuid4().hex[:10]}.png"
             output_path = os.path.join(OUTPUT_DIR, filename)
-
-            # Ensure the image data is in a saveable format
             saveable_image = output_image.astype(np.uint8)
             cv2.imwrite(output_path, saveable_image)
-
-            # Return the relative path for Laravel
             return {"url": f"processed/{filename}"}
         else:
             raise HTTPException(status_code=500, detail="Image processing failed to produce an output.")
