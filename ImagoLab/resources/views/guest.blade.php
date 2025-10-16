@@ -15,46 +15,24 @@
         <link rel="stylesheet" href="{{ asset('css/basic-toolsstyle.css') }}">
     @endif
 
-    {{-- Styles for our loading overlay and canvas placeholder --}}
     @if(!$isAdvanced)
     <style>
-        #loader-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(10, 25, 47, 0.8); display: flex;
-            justify-content: center; align-items: center; z-index: 1000;
-            flex-direction: column; color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            transition: opacity 0.3s ease;
-        }
+        #loader-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(10, 25, 47, 0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; color: #fff; font-family: sans-serif; transition: opacity 0.3s ease; }
         #loader-overlay .fa-spinner { font-size: 3rem; margin-bottom: 1rem; }
-        #loader-overlay p { font-size: 1.2rem; }
         .content-hidden { opacity: 0; pointer-events: none; }
         .content-visible { opacity: 1; transition: opacity 0.5s ease; }
-
-        #canvas-placeholder {
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            color: var(--border-color);
-        }
+        #canvas-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; color: var(--border-color); }
         #canvas-placeholder i { font-size: 3rem; }
         #canvas-placeholder p { margin-top: 1rem; font-size: 1rem; }
-
-        /* FIX: Ensure canvas size is not overly constrained by CSS */
-        #main-canvas {
-            max-width: 100%;
-            max-height: 100%;
-            /* object-fit is for img, not canvas, but max-width/height are key */
-        }
+        #main-canvas { max-width: 100%; max-height: 100%; }
+        .parameter-section { display: none; } /* Hide all by default */
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     </style>
     @endif
 </head>
 <body>
     <canvas id="stars-canvas"></canvas>
 
-    {{-- The entire HTML structure of your page remains the same --}}
-    {{-- ... your full header ... --}}
-    {{-- ... your full container with both advanced and basic editor HTML ... --}}
 <div class="header">
     <div class="logo">
         <div class="logo-icon"><i class="fas fa-sparkles"></i></div>
@@ -79,7 +57,7 @@
                 <div class="feature-selector">
                     <div class="feature-option active" data-feature="removebg"><i class="fas fa-cut"></i><h3>Background Removal</h3><p>AI segmentation for clean cutouts</p></div>
                     <div class="feature-option" data-feature="superres"><i class="fas fa-expand-alt"></i><h3>Super Resolution</h3><p>AI upscaling for high quality</p></div>
-                    <div class="feature-option" data-feature="playground" style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-flask"></i><h3>Playground</h3><p>(Coming Soon)</p></div>
+                    <div class="feature-option" data-feature="autocolor"><i class="fas fa-expand-alt"></i><h3>Auto Color Correction</h3><p>AI Auto Color Correction for best visual</p></div>
                     <div class="feature-option" data-feature="showcase" style="opacity: 0.5; cursor: not-allowed;"><i class="fas fa-th-large"></i><h3>Showcase</h3><p>(Coming Soon)</p></div>
                 </div>
                 <div class="presets-section"><div class="presets-header"><h3>AI Presets</h3></div><div class="presets"><div class="preset active">Professional</div><div class="preset">Creative</div><div class="preset">Minimalist</div><div class="preset">Vibrant</div></div></div>
@@ -128,6 +106,9 @@
                 <div class="tool-submenu" id="edges-menu"><div class="tool-submenu-item" data-action="sobel_edge"><i class="fas fa-border-style"></i> Sobel</div><div class="tool-submenu-item" data-action="laplacian_edge"><i class="fas fa-border-all"></i> Laplacian</div><div class="tool-submenu-item" data-action="prewitt_edge"><i class="fas fa-border-none"></i> Prewitt</div></div>
                 <div class="tool-submenu" id="morphology-menu"><div class="tool-submenu-item" data-action="morphology"><i class="fas fa-compress-arrows-alt"></i> Operations</div></div>
                 <div class="tool-submenu" id="frequency-menu"><div class="tool-submenu-item" data-action="frequency"><i class="fas fa-filter"></i> Filters</div></div>
+                <div class="presets-section"><div class="presets-header"><h3>AI Presets</h3></div><div class="presets"><div class="preset active">Professional</div><div class="preset">Creative</div><div class="preset">Minimalist</div><div class="preset">Vibrant</div></div></div>
+                <div class="mode-selector"><div class="mode-btn active">Server Processing</div><div class="mode-btn" style="opacity: 0.5; cursor: not-allowed;">Local Processing</div></div>
+                <div class="info-box"><p><i class="fas fa-server"></i> All requests are processed on our secure backend.</p></div>
             </div>
             <div class="card">
                 <form action="{{ route('imago.process') }}" method="POST" enctype="multipart/form-data" id="image-form">

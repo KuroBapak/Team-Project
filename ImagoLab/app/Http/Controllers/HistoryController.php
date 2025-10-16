@@ -49,6 +49,7 @@ class HistoryController extends Controller
             'totalEdits' => $allUserImages->count(),
             'basicEdits' => $allUserImages->where('tool_type', 'basic')->count(),
             'advancedEdits' => $allUserImages->where('tool_type', 'advanced')->count(),
+            'canvasEdits' => $allUserImages->where('tool_type', 'canvas')->count(),
         ]);
     }
 

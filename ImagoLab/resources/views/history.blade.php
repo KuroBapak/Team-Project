@@ -69,6 +69,10 @@
                 <div class="stat-value">{{ $advancedEdits }}</div>
                 <div class="stat-label">AI Enhancements</div>
             </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ $canvasEdits }}</div>
+                <div class="stat-label">Canvas</div>
+            </div>
         </div>
 
         <form method="GET" action="{{ route('history.index') }}" class="filters">

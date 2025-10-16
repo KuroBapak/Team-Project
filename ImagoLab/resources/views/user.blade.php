@@ -122,6 +122,9 @@
                 <div class="tool-submenu" id="edges-menu"><div class="tool-submenu-item" data-action="sobel_edge"><i class="fas fa-border-style"></i> Sobel</div><div class="tool-submenu-item" data-action="laplacian_edge"><i class="fas fa-border-all"></i> Laplacian</div><div class="tool-submenu-item" data-action="prewitt_edge"><i class="fas fa-border-none"></i> Prewitt</div></div>
                 <div class="tool-submenu" id="morphology-menu"><div class="tool-submenu-item" data-action="morphology"><i class="fas fa-compress-arrows-alt"></i> Operations</div></div>
                 <div class="tool-submenu" id="frequency-menu"><div class="tool-submenu-item" data-action="frequency"><i class="fas fa-filter"></i> Filters</div></div>
+                <div class="presets-section"><div class="presets-header"><h3>AI Presets</h3></div><div class="presets"><div class="preset active">Professional</div><div class="preset">Creative</div><div class="preset">Minimalist</div><div class="preset">Vibrant</div></div></div>
+                <div class="mode-selector"><div class="mode-btn active">Server Processing</div><div class="mode-btn" style="opacity: 0.5; cursor: not-allowed;">Local Processing</div></div>
+                <div class="info-box"><p><i class="fas fa-server"></i> All requests are processed on our secure backend.</p></div>
             </div>
             <div class="card">
                 <form action="{{ route('imago.process') }}" method="POST" enctype="multipart/form-data" id="image-form">

@@ -21,21 +21,31 @@
                 <input type="hidden" name="tool_type" value="basic">
                 <button type="submit" class="nav-link-button">Basic Tools</button>
             </form>
-            <div class="profile-dropdown">
-                <button class="profile-toggle" id="profileToggle">{{ Auth::user()->name }} <i class="fas fa-chevron-down" style="font-size:12px;"></i></button>
-                <div class="dropdown-menu" id="profileMenu">
-                    <a href="{{ route('profile.edit') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
-                    <a href="{{ route('history.index') }}" class="dropdown-item"><i class="fas fa-history"></i> History</a>
-                    <div class="dropdown-divider"></div>
-                    <form method="POST" action="{{ route('logout') }}">@csrf
-                        <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();this.closest('form').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
-                    </form>
+
+            {{-- ✅ START: FIX FOR GUEST USERS --}}
+            @auth
+                <div class="profile-dropdown">
+                    <button class="profile-toggle" id="profileToggle">{{ Auth::user()->name }} <i class="fas fa-chevron-down" style="font-size:12px;"></i></button>
+                    <div class="dropdown-menu" id="profileMenu">
+                        <a href="{{ route('profile.edit') }}" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+                        <a href="{{ route('history.index') }}" class="dropdown-item"><i class="fas fa-history"></i> History</a>
+                        <div class="dropdown-divider"></div>
+                        <form method="POST" action="{{ route('logout') }}">@csrf
+                            <a href="{{ route('logout') }}" class="dropdown-item" onclick="event.preventDefault();this.closest('form').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </form>
+                    </div>
                 </div>
-            </div>
+            @else
+                <a href="{{ route('login') }}" class="nav-link">Login</a>
+                <span class="nav-link" style="cursor: default; color: #a0aec0;">Guest</span>
+            @endauth
+            {{-- ✅ END: FIX FOR GUEST USERS --}}
+
         </div>
     </div>
 
     <div class="canvas-editor-container">
+        {{-- The rest of your file remains exactly the same --}}
         <div class="canvas-toolbar">
             <div class="tool-section">
                 <div class="tool-section-header">File</div>
@@ -53,26 +63,21 @@
                 <button class="tool-btn" data-tool="text"><i class="fas fa-font"></i> Text</button>
             </div>
 
-            {{-- TOOL-SPECIFIC OPTIONS --}}
             <div id="tool-options">
                 <div class="options-panel" data-tool="crop" style="display:block;">
                     <button id="apply-crop-btn" class="btn btn-primary">Apply Crop</button>
                     <button id="cancel-crop-btn" class="btn btn-outline">Cancel</button>
                 </div>
-
-                <!-- DRAW PANEL: added missing color input -->
                 <div class="options-panel" data-tool="draw" style="display:none;">
                     <label for="draw-color">Color</label>
                     <input type="color" id="draw-color" value="#000000">
                     <label for="draw-width">Width</label>
                     <input type="range" id="draw-width" min="1" max="50" value="5">
                 </div>
-
                 <div class="options-panel" data-tool="shape" style="display:none;">
                     <button id="add-rect-btn" class="btn btn-outline">Rectangle</button>
                     <button id="add-circle-btn" class="btn btn-outline">Circle</button>
                 </div>
-
                 <div class="options-panel" data-tool="text" style="display:none;">
                     <button id="add-text-btn" class="btn btn-outline">Add Text</button>
                 </div>
@@ -102,7 +107,7 @@
 
 <script>
 'use strict';
-
+// ... (The rest of your script remains unchanged)
 document.addEventListener('DOMContentLoaded', () => {
     // --- background stars (unchanged) ---
     const starsCanvas = document.getElementById('stars-canvas');

@@ -10,6 +10,7 @@
 /.nova
 /.phpunit.cache
 /python/venv
+/venv
 /.vscode
 /.zed
 /auth.json
