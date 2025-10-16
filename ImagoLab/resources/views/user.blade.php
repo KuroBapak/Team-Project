@@ -91,11 +91,6 @@
         <h3>Low-Light Enhance</h3>
         <p>Illuminate dark photos with AI</p>
     </div>
-    <div class="feature-option" data-feature="showcase" style="opacity: 0.5; cursor: not-allowed;">
-        <i class="fas fa-th-large"></i>
-        <h3>Showcase</h3>
-        <p>(Coming Soon)</p>
-    </div>
 </div>
                 <div class="presets-section"><div class="presets-header"><h3>AI Presets</h3></div><div class="presets"><div class="preset active">Professional</div><div class="preset">Creative</div><div class="preset">Minimalist</div><div class="preset">Vibrant</div></div></div>
                 <div class="mode-selector"><div class="mode-btn active">Server Processing</div><div class="mode-btn" style="opacity: 0.5; cursor: not-allowed;">Local Processing</div></div>
